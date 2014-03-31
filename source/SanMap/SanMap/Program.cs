@@ -176,8 +176,8 @@ namespace SanMap
                     var tiles = 1 << zoom;
 
                     //Calculate the source-tilesize
-                    var tileWidth = baseImage.Width/tiles;
-                    var tileHeight = baseImage.Height/tiles;
+                    var tileWidth = (float)baseImage.Width/tiles;
+                    var tileHeight = (float)baseImage.Height / tiles;
 
                     //Keep track of our progress
                     var progress = 0;
@@ -187,12 +187,12 @@ namespace SanMap
                         for (var tileY = 0; tileY < tiles; tileY++)
                         {
                             //Create a new bitmap of the source-tilesize
-                            var baseTile = new Bitmap(tileWidth, tileHeight);
+                            var baseTile = new Bitmap((int)Math.Floor(tileWidth), (int)Math.Floor(tileHeight));
                             using (Graphics g = Graphics.FromImage(baseTile))
                             {
                                 //Copy the image from the source
-                                g.DrawImage(baseImage, new Rectangle(0, 0, tileWidth, tileHeight),
-                                    new Rectangle(tileWidth*tileX, tileHeight*tileY, tileWidth, tileHeight),
+                                g.DrawImage(baseImage, new RectangleF(0, 0, tileWidth, tileHeight),
+                                    new RectangleF(tileWidth*tileX, tileHeight*tileY, tileWidth, tileHeight),
                                     GraphicsUnit.Pixel);
                             }
 
