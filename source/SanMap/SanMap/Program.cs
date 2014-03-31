@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -150,20 +151,24 @@ namespace SanMap
             #region Show information
 
             //Show entered information
-            Console.WriteLine("SanMap cutting tool...");
+            Console.WriteLine("=======================");
+            Console.WriteLine("SanMap Cutting Tool");
+            Console.WriteLine("http://github.com/ikkentim/SanMap");
+            Console.WriteLine("=======================");
+            Console.WriteLine();
             Console.WriteLine("Input file: " + inputPath);
             Console.WriteLine("Output directory: " + outputPath);
             Console.WriteLine("Target size: " + targetSize + "x" + targetSize);
             Console.WriteLine("Zoom levels: " + minimumZoomLevel + "-" + maximumZoomLevel);
-
+            Console.WriteLine();
             #endregion
 
             #region Cutting
 
-
             try
             {
                 //Read the input image to memory.
+                Console.WriteLine("Opening input file...");
                 var baseImage = Image.FromFile(inputPath) as Bitmap;
 
                 //Loop trough every zoom level.
@@ -176,8 +181,8 @@ namespace SanMap
                     var tiles = 1 << zoom;
 
                     //Calculate the source-tilesize
-                    var tileWidth = (float)baseImage.Width/tiles;
-                    var tileHeight = (float)baseImage.Height / tiles;
+                    var tileWidth = (float) baseImage.Width/tiles;
+                    var tileHeight = (float) baseImage.Height/tiles;
 
                     //Keep track of our progress
                     var progress = 0;
@@ -187,7 +192,7 @@ namespace SanMap
                         for (var tileY = 0; tileY < tiles; tileY++)
                         {
                             //Create a new bitmap of the source-tilesize
-                            var baseTile = new Bitmap((int)Math.Floor(tileWidth), (int)Math.Floor(tileHeight));
+                            var baseTile = new Bitmap((int) Math.Floor(tileWidth), (int) Math.Floor(tileHeight));
                             using (Graphics g = Graphics.FromImage(baseTile))
                             {
                                 //Copy the image from the source
@@ -197,7 +202,7 @@ namespace SanMap
                             }
 
                             //Resize the tile
-                            var tile = new Bitmap(baseTile, new Size(targetSize, targetSize));
+                            var tile = ResizeImage(baseTile, new Size(targetSize, targetSize));
 
                             //Generate the output filename
                             var outputFile = string.Format("{0}.{1}.{2}.{3}.{4}", baseName, zoom, tileX, tileY,
@@ -231,8 +236,33 @@ namespace SanMap
                 Console.Write("\t");
                 Console.WriteLine(e.Message);
             }
-
+            finally
+            {
+                Console.WriteLine("Done Processing!");
+            }
             #endregion
+        }
+
+        static Bitmap ResizeImage(Image image, Size size)
+        {
+            Bitmap newImage = new Bitmap(size.Width, size.Height);
+         
+            using (Graphics gr = Graphics.FromImage(newImage))
+            {
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                using (ImageAttributes wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    gr.DrawImage(image, new Rectangle(0, 0, size.Width, size.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            //return the resulting bitmap
+            return newImage;
         }
 
         static void ShowHelp(OptionSet p)
