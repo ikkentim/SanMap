@@ -1,3 +1,7 @@
+// SanMap.js
+// Tool for drawing Google Maps of San Andreas.
+// Written by Tim Potze
+
 //Represents the Projection used in SanMap
 function SanMapProjection() {
     //The range across the map
@@ -6,17 +10,19 @@ function SanMapProjection() {
     this.pixelOrigin_ = new google.maps.Point(projectionRange / 2, projectionRange / 2);
     //The number of pixels per longitude degree
     this.pixelsPerLonDegree_ = projectionRange / 360;
+    this.scaleLat = 2;	// latitude scale
+    this.scaleLng = 2;	// longitude scale
     //Method to convert LatLng to a Point.
     this.fromLatLngToPoint = function (latLng, opt_point) {
         var point = opt_point || new google.maps.Point(0, 0);
-        point.x = this.pixelOrigin_.x + latLng.lng() * this.pixelsPerLonDegree_;
-        point.y = this.pixelOrigin_.y - latLng.lat() * this.pixelsPerLonDegree_;
+        point.x = this.pixelOrigin_.x + latLng.lng() * this.pixelsPerLonDegree_ * this.scaleLng;
+        point.y = this.pixelOrigin_.y - latLng.lat() * this.pixelsPerLonDegree_ * this.scaleLat;
         return point;
     }
     //Method to convert Point to LatLng
     this.fromPointToLatLng = function (point) {
-        var lng = (point.x - this.pixelOrigin_.x) / this.pixelsPerLonDegree_;
-        var lat = -( point.y - this.pixelOrigin_.y) / this.pixelsPerLonDegree_;
+        var lng = (point.x - this.pixelOrigin_.x) / this.pixelsPerLonDegree_ / this.scaleLng;
+        var lat = -( point.y - this.pixelOrigin_.y) / this.pixelsPerLonDegree_ / this.scaleLat;
         return new google.maps.LatLng(lat, lng, true);
     }
 };
@@ -69,9 +75,32 @@ function SanMap(canvas, mapTypes, zoom, center, repeating) {
         }
     }
 
+    //Set default mapType to first in mayTypes array.
     this.map.setMapTypeId(Object.keys(mapTypes)[0]);
+
+    //If not repeating, bound the viewable area
+    if (!repeating) {
+        var map = this.map,
+            bounds = new google.maps.LatLngBounds(new google.maps.LatLng(-90, -90), new google.maps.LatLng(90, 90));
+
+        //When chenter changed, check if it's within the bounds of the map
+        google.maps.event.addListener(map, 'center_changed', function () {
+            if (bounds.contains(map.getCenter()))
+                return;
+
+            var lng = map.getCenter().lng(),
+                lat = map.getCenter().lat();
+
+            //Check if any direction passed bounds
+            if (lng < bounds.getSouthWest().lng()) lng = bounds.getSouthWest().lng();
+            if (lng > bounds.getNorthEast().lng()) lng = bounds.getNorthEast().lng();
+            if (lat < bounds.getSouthWest().lat()) lat = bounds.getSouthWest().lat();
+            if (lat > bounds.getNorthEast().lat()) lat = bounds.getNorthEast().lat();
+            map.setCenter(new google.maps.LatLng(lat, lng));
+        });
+    }
 };
 
 SanMap.getLatLngFromPos = function (x, y) {
-    return new google.maps.LatLng(y / 3000 * 180, x / 3000 * 180);
+    return new google.maps.LatLng(y / 3000 * 90, x / 3000 * 90);
 }
