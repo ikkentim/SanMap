@@ -3,6 +3,8 @@ SanMap
 
 San Andreas maps and projection for Google Maps JS API.
 
+Release topic: <http://forum.sa-mp.com/showthread.php?t=504181>
+
 How to use
 ====
 
