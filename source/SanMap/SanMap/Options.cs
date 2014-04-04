@@ -1,4 +1,16 @@
-﻿//
+﻿// SanMap
+// Copyright (C) 2014 Tim Potze
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+// 
+// For more information, please refer to <http://unlicense.org>
+//
 // Options.cs
 //
 // Authors:
@@ -16,15 +28,6 @@
 // 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 //
 using System;
 using System.Collections;
@@ -32,20 +35,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace SanMap
 {
-
     public class OptionValueCollection : IList, IList<string>
     {
-
-        List<string> values = new List<string>();
-        OptionContext c;
+        private readonly OptionContext c;
+        private readonly List<string> values = new List<string>();
 
         internal OptionValueCollection(OptionContext c)
         {
@@ -53,56 +54,141 @@ namespace SanMap
         }
 
         #region ICollection
-        void ICollection.CopyTo(Array array, int index) { (values as ICollection).CopyTo(array, index); }
-        bool ICollection.IsSynchronized { get { return (values as ICollection).IsSynchronized; } }
-        object ICollection.SyncRoot { get { return (values as ICollection).SyncRoot; } }
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            (values as ICollection).CopyTo(array, index);
+        }
+
+        bool ICollection.IsSynchronized
+        {
+            get { return (values as ICollection).IsSynchronized; }
+        }
+
+        object ICollection.SyncRoot
+        {
+            get { return (values as ICollection).SyncRoot; }
+        }
+
         #endregion
 
         #region ICollection<T>
-        public void Add(string item) { values.Add(item); }
-        public void Clear() { values.Clear(); }
-        public bool Contains(string item) { return values.Contains(item); }
-        public void CopyTo(string[] array, int arrayIndex) { values.CopyTo(array, arrayIndex); }
-        public bool Remove(string item) { return values.Remove(item); }
-        public int Count { get { return values.Count; } }
-        public bool IsReadOnly { get { return false; } }
+
+        public void Clear()
+        {
+            values.Clear();
+        }
+
+        public int Count
+        {
+            get { return values.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public void Add(string item)
+        {
+            values.Add(item);
+        }
+
+        public bool Contains(string item)
+        {
+            return values.Contains(item);
+        }
+
+        public void CopyTo(string[] array, int arrayIndex)
+        {
+            values.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(string item)
+        {
+            return values.Remove(item);
+        }
+
         #endregion
 
         #region IEnumerable
-        IEnumerator IEnumerable.GetEnumerator() { return values.GetEnumerator(); }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return values.GetEnumerator();
+        }
+
         #endregion
 
         #region IEnumerable<T>
-        public IEnumerator<string> GetEnumerator() { return values.GetEnumerator(); }
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            return values.GetEnumerator();
+        }
+
         #endregion
 
         #region IList
-        int IList.Add(object value) { return (values as IList).Add(value); }
-        bool IList.Contains(object value) { return (values as IList).Contains(value); }
-        int IList.IndexOf(object value) { return (values as IList).IndexOf(value); }
-        void IList.Insert(int index, object value) { (values as IList).Insert(index, value); }
-        void IList.Remove(object value) { (values as IList).Remove(value); }
-        void IList.RemoveAt(int index) { (values as IList).RemoveAt(index); }
-        bool IList.IsFixedSize { get { return false; } }
-        object IList.this[int index] { get { return this[index]; } set { (values as IList)[index] = value; } }
+
+        int IList.Add(object value)
+        {
+            return (values as IList).Add(value);
+        }
+
+        bool IList.Contains(object value)
+        {
+            return (values as IList).Contains(value);
+        }
+
+        int IList.IndexOf(object value)
+        {
+            return (values as IList).IndexOf(value);
+        }
+
+        void IList.Insert(int index, object value)
+        {
+            (values as IList).Insert(index, value);
+        }
+
+        void IList.Remove(object value)
+        {
+            (values as IList).Remove(value);
+        }
+
+        void IList.RemoveAt(int index)
+        {
+            (values as IList).RemoveAt(index);
+        }
+
+        bool IList.IsFixedSize
+        {
+            get { return false; }
+        }
+
+        object IList.this[int index]
+        {
+            get { return this[index]; }
+            set { (values as IList)[index] = value; }
+        }
+
         #endregion
 
         #region IList<T>
-        public int IndexOf(string item) { return values.IndexOf(item); }
-        public void Insert(int index, string item) { values.Insert(index, item); }
-        public void RemoveAt(int index) { values.RemoveAt(index); }
 
-        private void AssertValid(int index)
+        public int IndexOf(string item)
         {
-            if (c.Option == null)
-                throw new InvalidOperationException("OptionContext.Option is null.");
-            if (index >= c.Option.MaxValueCount)
-                throw new ArgumentOutOfRangeException("index");
-            if (c.Option.OptionValueType == OptionValueType.Required &&
-                    index >= values.Count)
-                throw new OptionException(string.Format(
-                            c.OptionSet.MessageLocalizer("Missing required value for option '{0}'."), c.OptionName),
-                        c.OptionName);
+            return values.IndexOf(item);
+        }
+
+        public void Insert(int index, string item)
+        {
+            values.Insert(index, item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            values.RemoveAt(index);
         }
 
         public string this[int index]
@@ -112,11 +198,22 @@ namespace SanMap
                 AssertValid(index);
                 return index >= values.Count ? null : values[index];
             }
-            set
-            {
-                values[index] = value;
-            }
+            set { values[index] = value; }
         }
+
+        private void AssertValid(int index)
+        {
+            if (c.Option == null)
+                throw new InvalidOperationException("OptionContext.Option is null.");
+            if (index >= c.Option.MaxValueCount)
+                throw new ArgumentOutOfRangeException("index");
+            if (c.Option.OptionValueType == OptionValueType.Required &&
+                index >= values.Count)
+                throw new OptionException(string.Format(
+                    c.OptionSet.MessageLocalizer("Missing required value for option '{0}'."), c.OptionName),
+                    c.OptionName);
+        }
+
         #endregion
 
         public List<string> ToList()
@@ -137,35 +234,20 @@ namespace SanMap
 
     public class OptionContext
     {
-        private Option option;
-        private string name;
-        private int index;
-        private OptionSet set;
-        private OptionValueCollection c;
+        private readonly OptionValueCollection c;
+        private readonly OptionSet set;
 
         public OptionContext(OptionSet set)
         {
             this.set = set;
-            this.c = new OptionValueCollection(this);
+            c = new OptionValueCollection(this);
         }
 
-        public Option Option
-        {
-            get { return option; }
-            set { option = value; }
-        }
+        public Option Option { get; set; }
 
-        public string OptionName
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        public string OptionName { get; set; }
 
-        public int OptionIndex
-        {
-            get { return index; }
-            set { index = value; }
-        }
+        public int OptionIndex { get; set; }
 
         public OptionSet OptionSet
         {
@@ -187,11 +269,13 @@ namespace SanMap
 
     public abstract class Option
     {
-        string prototype, description;
-        string[] names;
-        OptionValueType type;
-        int count;
-        string[] separators;
+        private static readonly char[] NameTerminator = {'=', ':'};
+        private readonly int count;
+        private readonly string description;
+        private readonly string[] names;
+        private readonly string prototype;
+        private readonly OptionValueType type;
+        private string[] separators;
 
         protected Option(string prototype, string description)
             : this(prototype, description, 1)
@@ -208,74 +292,94 @@ namespace SanMap
                 throw new ArgumentOutOfRangeException("maxValueCount");
 
             this.prototype = prototype;
-            this.names = prototype.Split('|');
+            names = prototype.Split('|');
             this.description = description;
-            this.count = maxValueCount;
-            this.type = ParsePrototype();
+            count = maxValueCount;
+            type = ParsePrototype();
 
-            if (this.count == 0 && type != OptionValueType.None)
+            if (count == 0 && type != OptionValueType.None)
                 throw new ArgumentException(
-                        "Cannot provide maxValueCount of 0 for OptionValueType.Required or " +
-                            "OptionValueType.Optional.",
-                        "maxValueCount");
-            if (this.type == OptionValueType.None && maxValueCount > 1)
+                    "Cannot provide maxValueCount of 0 for OptionValueType.Required or " +
+                    "OptionValueType.Optional.",
+                    "maxValueCount");
+            if (type == OptionValueType.None && maxValueCount > 1)
                 throw new ArgumentException(
-                        string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
-                        "maxValueCount");
+                    string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
+                    "maxValueCount");
             if (Array.IndexOf(names, "<>") >= 0 &&
-                    ((names.Length == 1 && this.type != OptionValueType.None) ||
-                     (names.Length > 1 && this.MaxValueCount > 1)))
+                ((names.Length == 1 && type != OptionValueType.None) ||
+                 (names.Length > 1 && MaxValueCount > 1)))
                 throw new ArgumentException(
-                        "The default option handler '<>' cannot require values.",
-                        "prototype");
+                    "The default option handler '<>' cannot require values.",
+                    "prototype");
         }
 
-        public string Prototype { get { return prototype; } }
-        public string Description { get { return description; } }
-        public OptionValueType OptionValueType { get { return type; } }
-        public int MaxValueCount { get { return count; } }
+        public string Prototype
+        {
+            get { return prototype; }
+        }
+
+        public string Description
+        {
+            get { return description; }
+        }
+
+        public OptionValueType OptionValueType
+        {
+            get { return type; }
+        }
+
+        public int MaxValueCount
+        {
+            get { return count; }
+        }
+
+        internal string[] Names
+        {
+            get { return names; }
+        }
+
+        internal string[] ValueSeparators
+        {
+            get { return separators; }
+        }
 
         public string[] GetNames()
         {
-            return (string[])names.Clone();
+            return (string[]) names.Clone();
         }
 
         public string[] GetValueSeparators()
         {
             if (separators == null)
                 return new string[0];
-            return (string[])separators.Clone();
+            return (string[]) separators.Clone();
         }
 
         protected static T Parse<T>(string value, OptionContext c)
         {
-            TypeConverter conv = TypeDescriptor.GetConverter(typeof(T));
+            TypeConverter conv = TypeDescriptor.GetConverter(typeof (T));
             T t = default(T);
             try
             {
                 if (value != null)
-                    t = (T)conv.ConvertFromString(value);
+                    t = (T) conv.ConvertFromString(value);
             }
             catch (Exception e)
             {
                 throw new OptionException(
-                        string.Format(
-                            c.OptionSet.MessageLocalizer("Could not convert string `{0}' to type {1} for option `{2}'."),
-                            value, typeof(T).Name, c.OptionName),
-                        c.OptionName, e);
+                    string.Format(
+                        c.OptionSet.MessageLocalizer("Could not convert string `{0}' to type {1} for option `{2}'."),
+                        value, typeof (T).Name, c.OptionName),
+                    c.OptionName, e);
             }
             return t;
         }
 
-        internal string[] Names { get { return names; } }
-        internal string[] ValueSeparators { get { return separators; } }
-
-        static readonly char[] NameTerminator = new char[] { '=', ':' };
-
         private OptionValueType ParsePrototype()
         {
             char type = '\0';
-            List<string> seps = new List<string>();
+            var seps = new List<string>();
             for (int i = 0; i < names.Length; ++i)
             {
                 string name = names[i];
@@ -290,8 +394,8 @@ namespace SanMap
                     type = name[end];
                 else
                     throw new ArgumentException(
-                            string.Format("Conflicting option types: '{0}' vs. '{1}'.", type, name[end]),
-                            "prototype");
+                        string.Format("Conflicting option types: '{0}' vs. '{1}'.", type, name[end]),
+                        "prototype");
                 AddSeparators(name, end, seps);
             }
 
@@ -300,16 +404,16 @@ namespace SanMap
 
             if (count <= 1 && seps.Count != 0)
                 throw new ArgumentException(
-                        string.Format("Cannot provide key/value separators for Options taking {0} value(s).", count),
-                        "prototype");
+                    string.Format("Cannot provide key/value separators for Options taking {0} value(s).", count),
+                    "prototype");
             if (count > 1)
             {
                 if (seps.Count == 0)
-                    this.separators = new string[] { ":", "=" };
+                    separators = new[] {":", "="};
                 else if (seps.Count == 1 && seps[0].Length == 0)
-                    this.separators = null;
+                    separators = null;
                 else
-                    this.separators = seps.ToArray();
+                    separators = seps.ToArray();
             }
 
             return type == '=' ? OptionValueType.Required : OptionValueType.Optional;
@@ -325,15 +429,15 @@ namespace SanMap
                     case '{':
                         if (start != -1)
                             throw new ArgumentException(
-                                    string.Format("Ill-formed name/value separator found in \"{0}\".", name),
-                                    "prototype");
+                                string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                                "prototype");
                         start = i + 1;
                         break;
                     case '}':
                         if (start == -1)
                             throw new ArgumentException(
-                                    string.Format("Ill-formed name/value separator found in \"{0}\".", name),
-                                    "prototype");
+                                string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                                "prototype");
                         seps.Add(name.Substring(start, i - start));
                         start = -1;
                         break;
@@ -345,8 +449,8 @@ namespace SanMap
             }
             if (start != -1)
                 throw new ArgumentException(
-                        string.Format("Ill-formed name/value separator found in \"{0}\".", name),
-                        "prototype");
+                    string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                    "prototype");
         }
 
         public void Invoke(OptionContext c)
@@ -368,7 +472,7 @@ namespace SanMap
     [Serializable]
     public class OptionException : Exception
     {
-        private string option;
+        private readonly string option;
 
         public OptionException()
         {
@@ -377,24 +481,24 @@ namespace SanMap
         public OptionException(string message, string optionName)
             : base(message)
         {
-            this.option = optionName;
+            option = optionName;
         }
 
         public OptionException(string message, string optionName, Exception innerException)
             : base(message, innerException)
         {
-            this.option = optionName;
+            option = optionName;
         }
 
         protected OptionException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            this.option = info.GetString("OptionName");
+            option = info.GetString("OptionName");
         }
 
         public string OptionName
         {
-            get { return this.option; }
+            get { return option; }
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, SerializationFormatter = true)]
@@ -409,6 +513,13 @@ namespace SanMap
 
     public class OptionSet : KeyedCollection<string, Option>
     {
+        private const int OptionWidth = 29;
+
+        private readonly Regex ValueOption = new Regex(
+            @"^(?<flag>--|-|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
+
+        private readonly Converter<string, string> localizer;
+
         public OptionSet()
             : this(delegate(string f) { return f; })
         {
@@ -418,8 +529,6 @@ namespace SanMap
         {
             this.localizer = localizer;
         }
-
-        Converter<string, string> localizer;
 
         public Converter<string, string> MessageLocalizer
         {
@@ -480,7 +589,7 @@ namespace SanMap
         {
             if (option == null)
                 throw new ArgumentNullException("option");
-            List<string> added = new List<string>(option.Names.Length);
+            var added = new List<string>(option.Names.Length);
             try
             {
                 // KeyedCollection.InsertItem/SetItem handle the 0th name.
@@ -504,24 +613,6 @@ namespace SanMap
             return this;
         }
 
-        sealed class ActionOption : Option
-        {
-            Action<OptionValueCollection> action;
-
-            public ActionOption(string prototype, string description, int count, Action<OptionValueCollection> action)
-                : base(prototype, description, count)
-            {
-                if (action == null)
-                    throw new ArgumentNullException("action");
-                this.action = action;
-            }
-
-            protected override void OnParseComplete(OptionContext c)
-            {
-                action(c.OptionValues);
-            }
-        }
-
         public OptionSet Add(string prototype, Action<string> action)
         {
             return Add(prototype, null, action);
@@ -532,7 +623,7 @@ namespace SanMap
             if (action == null)
                 throw new ArgumentNullException("action");
             Option p = new ActionOption(prototype, description, 1,
-                    delegate(OptionValueCollection v) { action(v[0]); });
+                delegate(OptionValueCollection v) { action(v[0]); });
             base.Add(p);
             return this;
         }
@@ -547,47 +638,9 @@ namespace SanMap
             if (action == null)
                 throw new ArgumentNullException("action");
             Option p = new ActionOption(prototype, description, 2,
-                    delegate(OptionValueCollection v) { action(v[0], v[1]); });
+                delegate(OptionValueCollection v) { action(v[0], v[1]); });
             base.Add(p);
             return this;
-        }
-
-        sealed class ActionOption<T> : Option
-        {
-            Action<T> action;
-
-            public ActionOption(string prototype, string description, Action<T> action)
-                : base(prototype, description, 1)
-            {
-                if (action == null)
-                    throw new ArgumentNullException("action");
-                this.action = action;
-            }
-
-            protected override void OnParseComplete(OptionContext c)
-            {
-                action(Parse<T>(c.OptionValues[0], c));
-            }
-        }
-
-        sealed class ActionOption<TKey, TValue> : Option
-        {
-            OptionAction<TKey, TValue> action;
-
-            public ActionOption(string prototype, string description, OptionAction<TKey, TValue> action)
-                : base(prototype, description, 2)
-            {
-                if (action == null)
-                    throw new ArgumentNullException("action");
-                this.action = action;
-            }
-
-            protected override void OnParseComplete(OptionContext c)
-            {
-                action(
-                        Parse<TKey>(c.OptionValues[0], c),
-                        Parse<TValue>(c.OptionValues[1], c));
-            }
         }
 
         public OptionSet Add<T>(string prototype, Action<T> action)
@@ -615,33 +668,33 @@ namespace SanMap
             return new OptionContext(this);
         }
 
-		public List<string> Parse (IEnumerable<string> arguments)
-		{
-			bool process = true;
-			OptionContext c = CreateOptionContext ();
-			c.OptionIndex = -1;
-			var def = GetOptionForName ("<>");
-			var unprocessed = 
-				from argument in arguments
-				where ++c.OptionIndex >= 0 && (process || def != null)
-					? process
-						? argument == "--" 
-							? (process = false)
-							: !Parse (argument, c)
-								? def != null 
-									? Unprocessed (null, def, c, argument) 
-									: true
-								: false
-						: def != null 
-							? Unprocessed (null, def, c, argument)
-							: true
-					: true
-				select argument;
-			List<string> r = unprocessed.ToList ();
-			if (c.Option != null)
-				c.Option.Invoke (c);
-			return r;
-		}
+        public List<string> Parse(IEnumerable<string> arguments)
+        {
+            bool process = true;
+            OptionContext c = CreateOptionContext();
+            c.OptionIndex = -1;
+            Option def = GetOptionForName("<>");
+            IEnumerable<string> unprocessed =
+                from argument in arguments
+                where ++c.OptionIndex >= 0 && (process || def != null)
+                    ? process
+                        ? argument == "--"
+                            ? (process = false)
+                            : !Parse(argument, c)
+                                ? def != null
+                                    ? Unprocessed(null, def, c, argument)
+                                    : true
+                                : false
+                        : def != null
+                            ? Unprocessed(null, def, c, argument)
+                            : true
+                    : true
+                select argument;
+            List<string> r = unprocessed.ToList();
+            if (c.Option != null)
+                c.Option.Invoke(c);
+            return r;
+        }
 
         private static bool Unprocessed(ICollection<string> extra, Option def, OptionContext c, string argument)
         {
@@ -656,10 +709,8 @@ namespace SanMap
             return false;
         }
 
-        private readonly Regex ValueOption = new Regex(
-            @"^(?<flag>--|-|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
-
-        protected bool GetOptionParts(string argument, out string flag, out string name, out string sep, out string value)
+        protected bool GetOptionParts(string argument, out string flag, out string name, out string sep,
+            out string value)
         {
             if (argument == null)
                 throw new ArgumentNullException("argument");
@@ -725,20 +776,20 @@ namespace SanMap
         {
             if (option != null)
                 foreach (string o in c.Option.ValueSeparators != null
-                        ? option.Split(c.Option.ValueSeparators, StringSplitOptions.None)
-                        : new string[] { option })
+                    ? option.Split(c.Option.ValueSeparators, StringSplitOptions.None)
+                    : new[] {option})
                 {
                     c.OptionValues.Add(o);
                 }
             if (c.OptionValues.Count == c.Option.MaxValueCount ||
-                    c.Option.OptionValueType == OptionValueType.Optional)
+                c.Option.OptionValueType == OptionValueType.Optional)
                 c.Option.Invoke(c);
             else if (c.OptionValues.Count > c.Option.MaxValueCount)
             {
                 throw new OptionException(localizer(string.Format(
-                                "Error: Found {0} option values when expecting {1}.",
-                                c.OptionValues.Count, c.Option.MaxValueCount)),
-                        c.OptionName);
+                    "Error: Found {0} option values when expecting {1}.",
+                    c.OptionValues.Count, c.Option.MaxValueCount)),
+                    c.OptionName);
             }
         }
 
@@ -747,7 +798,7 @@ namespace SanMap
             Option p;
             string rn;
             if (n.Length >= 1 && (n[n.Length - 1] == '+' || n[n.Length - 1] == '-') &&
-                    Contains((rn = n.Substring(0, n.Length - 1))))
+                Contains((rn = n.Substring(0, n.Length - 1))))
             {
                 p = this[rn];
                 string v = n[n.Length - 1] == '+' ? option : null;
@@ -767,14 +818,14 @@ namespace SanMap
             for (int i = 0; i < n.Length; ++i)
             {
                 Option p;
-                string opt = f + n[i].ToString();
+                string opt = f + n[i];
                 string rn = n[i].ToString();
                 if (!Contains(rn))
                 {
                     if (i == 0)
                         return false;
                     throw new OptionException(string.Format(localizer(
-                                    "Cannot bundle unregistered option '{0}'."), opt), opt);
+                        "Cannot bundle unregistered option '{0}'."), opt), opt);
                 }
                 p = this[rn];
                 switch (p.OptionValueType)
@@ -784,13 +835,13 @@ namespace SanMap
                         break;
                     case OptionValueType.Optional:
                     case OptionValueType.Required:
-                        {
-                            string v = n.Substring(i + 1);
-                            c.Option = p;
-                            c.OptionName = opt;
-                            ParseValue(v.Length != 0 ? v : null, c);
-                            return true;
-                        }
+                    {
+                        string v = n.Substring(i + 1);
+                        c.Option = p;
+                        c.OptionName = opt;
+                        ParseValue(v.Length != 0 ? v : null, c);
+                        return true;
+                    }
                     default:
                         throw new InvalidOperationException("Unknown OptionValueType: " + p.OptionValueType);
                 }
@@ -805,8 +856,6 @@ namespace SanMap
             c.OptionValues.Add(value);
             option.Invoke(c);
         }
-
-        private const int OptionWidth = 29;
 
         public void WriteOptionDescriptions(TextWriter o)
         {
@@ -826,7 +875,7 @@ namespace SanMap
 
                 List<string> lines = GetLines(localizer(GetDescription(p.Description)));
                 o.WriteLine(lines[0]);
-                string prefix = new string(' ', OptionWidth + 2);
+                var prefix = new string(' ', OptionWidth + 2);
                 for (int i = 1; i < lines.Count; ++i)
                 {
                     o.Write(prefix);
@@ -835,7 +884,7 @@ namespace SanMap
             }
         }
 
-        bool WriteOptionPrototype(TextWriter o, Option p, ref int written)
+        private bool WriteOptionPrototype(TextWriter o, Option p, ref int written)
         {
             string[] names = p.Names;
 
@@ -855,7 +904,8 @@ namespace SanMap
             }
 
             for (i = GetNextOptionIndex(names, i + 1);
-                    i < names.Length; i = GetNextOptionIndex(names, i + 1))
+                i < names.Length;
+                i = GetNextOptionIndex(names, i + 1))
             {
                 Write(o, ref written, ", ");
                 Write(o, ref written, names[i].Length == 1 ? "-" : "--");
@@ -863,7 +913,7 @@ namespace SanMap
             }
 
             if (p.OptionValueType == OptionValueType.Optional ||
-                    p.OptionValueType == OptionValueType.Required)
+                p.OptionValueType == OptionValueType.Required)
             {
                 if (p.OptionValueType == OptionValueType.Optional)
                 {
@@ -885,7 +935,7 @@ namespace SanMap
             return true;
         }
 
-        static int GetNextOptionIndex(string[] names, int i)
+        private static int GetNextOptionIndex(string[] names, int i)
         {
             while (i < names.Length && names[i] == "<>")
             {
@@ -894,7 +944,7 @@ namespace SanMap
             return i;
         }
 
-        static void Write(TextWriter o, ref int n, string s)
+        private static void Write(TextWriter o, ref int n, string s)
         {
             n += s.Length;
             o.Write(s);
@@ -906,9 +956,9 @@ namespace SanMap
                 return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
             string[] nameStart;
             if (maxIndex == 1)
-                nameStart = new string[] { "{0:", "{" };
+                nameStart = new[] {"{0:", "{"};
             else
-                nameStart = new string[] { "{" + index + ":" };
+                nameStart = new[] {"{" + index + ":"};
             for (int i = 0; i < nameStart.Length; ++i)
             {
                 int start, j = 0;
@@ -930,7 +980,7 @@ namespace SanMap
         {
             if (description == null)
                 return string.Empty;
-            StringBuilder sb = new StringBuilder(description.Length);
+            var sb = new StringBuilder(description.Length);
             int start = -1;
             for (int i = 0; i < description.Length; ++i)
             {
@@ -975,7 +1025,7 @@ namespace SanMap
 
         private static List<string> GetLines(string description)
         {
-            List<string> lines = new List<string>();
+            var lines = new List<string>();
             if (string.IsNullOrEmpty(description))
             {
                 lines.Add(string.Empty);
@@ -1035,6 +1085,61 @@ namespace SanMap
                 return end;
             return sep;
         }
+
+        private sealed class ActionOption : Option
+        {
+            private readonly Action<OptionValueCollection> action;
+
+            public ActionOption(string prototype, string description, int count, Action<OptionValueCollection> action)
+                : base(prototype, description, count)
+            {
+                if (action == null)
+                    throw new ArgumentNullException("action");
+                this.action = action;
+            }
+
+            protected override void OnParseComplete(OptionContext c)
+            {
+                action(c.OptionValues);
+            }
+        }
+
+        private sealed class ActionOption<T> : Option
+        {
+            private readonly Action<T> action;
+
+            public ActionOption(string prototype, string description, Action<T> action)
+                : base(prototype, description, 1)
+            {
+                if (action == null)
+                    throw new ArgumentNullException("action");
+                this.action = action;
+            }
+
+            protected override void OnParseComplete(OptionContext c)
+            {
+                action(Parse<T>(c.OptionValues[0], c));
+            }
+        }
+
+        private sealed class ActionOption<TKey, TValue> : Option
+        {
+            private readonly OptionAction<TKey, TValue> action;
+
+            public ActionOption(string prototype, string description, OptionAction<TKey, TValue> action)
+                : base(prototype, description, 2)
+            {
+                if (action == null)
+                    throw new ArgumentNullException("action");
+                this.action = action;
+            }
+
+            protected override void OnParseComplete(OptionContext c)
+            {
+                action(
+                    Parse<TKey>(c.OptionValues[0], c),
+                    Parse<TValue>(c.OptionValues[1], c));
+            }
+        }
     }
 }
-

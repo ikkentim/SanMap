@@ -1,4 +1,18 @@
-﻿using System;
+﻿// SanMap
+// Copyright (C) 2014 Tim Potze
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+// 
+// For more information, please refer to <http://unlicense.org>
+
+using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -12,15 +26,17 @@ namespace SanMap
         private static void Main(string[] args)
         {
             //Options
-            string baseName = null;
+            string baseName;
             string inputPath = null;
             string outputPath = null;
-            string outputExtension = "png";
-            ImageFormat outputFormat;
-            int minimumZoomLevel = 0;
-            int maximumZoomLevel = 4;
+            string extension = "png";
+            ImageFormat format;
+            int minZoom = 0;
+            int maxZoom = 4;
             int targetSize = 512;
+            bool useMagick = false;
             bool showHelp = false;
+            bool debug = false;
 
             #region Args checking
 
@@ -30,22 +46,22 @@ namespace SanMap
                 {
                     "i|input=",
                     "the input file (Required)",
-                    (value) => inputPath = value
+                    value => inputPath = value
                 },
                 {
                     "o|output=",
                     "the output path (Default: same path as input image)",
-                    (value) => outputPath = value
+                    value => outputPath = value
                 },
                 {
                     "z|zoom|maximum-zoom=",
                     "the maximum zoom level (Default: 4)",
-                    (int value) => maximumZoomLevel = value
+                    (int value) => maxZoom = value
                 },
                 {
                     "minimum-zoom=",
                     "the minimum zoom level (Default: 0)",
-                    (int value) => minimumZoomLevel = value < 0 ? 0 : value
+                    (int value) => minZoom = value < 0 ? 0 : value
                 },
                 {
                     "s|size|target-size=",
@@ -55,12 +71,20 @@ namespace SanMap
                 {
                     "e|extension|output-extension=",
                     "the output extension (Default: png)",
-                    (value) => outputExtension = value
+                    value => extension = value
                 },
                 {
                     "h|help", "show this message and exit",
                     value => showHelp = value != null
                 },
+                {
+                    "m|magick", "use ImageMagick to process the images",
+                    value => useMagick = value != null
+                },
+                {
+                    "d|debug", "show debug information",
+                    value => debug = value != null
+                }
             };
 
             //Try to parse the optionset, or print an error.
@@ -111,7 +135,7 @@ namespace SanMap
             }
 
             //Check if outputExtension is an supported ImageFormat.
-            if (!new[] {"bmp", "png", "jpg", "gif"}.Contains(outputExtension))
+            if (!new[] {"bmp", "png", "jpg", "gif"}.Contains(extension))
             {
                 Console.Write("SanMap: ");
                 Console.WriteLine("Output extension is not known .");
@@ -130,21 +154,23 @@ namespace SanMap
             Directory.CreateDirectory(outputPath);
 
             //Set outputFormat according to outputExtension.
-            switch (outputExtension)
+            switch (extension)
             {
                 case "bmp":
-                    outputFormat = ImageFormat.Bmp;
+                    format = ImageFormat.Bmp;
                     break;
                 case "jpg":
-                    outputFormat = ImageFormat.Jpeg;
+                    format = ImageFormat.Jpeg;
                     break;
                 case "gif":
-                    outputFormat = ImageFormat.Gif;
+                    format = ImageFormat.Gif;
                     break;
                 default:
-                    outputFormat = ImageFormat.Png;
+                    format = ImageFormat.Png;
                     break;
             }
+
+            Size size = ImageHelper.GetDimensions(inputPath);
 
             #endregion
 
@@ -156,68 +182,75 @@ namespace SanMap
             Console.WriteLine("http://github.com/ikkentim/SanMap");
             Console.WriteLine("=======================");
             Console.WriteLine();
-            Console.WriteLine("Input file: " + inputPath);
-            Console.WriteLine("Output directory: " + outputPath);
-            Console.WriteLine("Target size: " + targetSize + "x" + targetSize);
-            Console.WriteLine("Zoom levels: " + minimumZoomLevel + "-" + maximumZoomLevel);
+            Console.WriteLine("Input file: {0}", inputPath);
+            Console.WriteLine("Input size: {0}x{1}", size.Width, size.Height);
+            Console.WriteLine("Output directory: {0}", outputPath);
+            Console.WriteLine("Target size: {0}x{0}", targetSize);
+            Console.WriteLine("Zoom levels: {0}-{1}", minZoom, maxZoom);
             Console.WriteLine();
+
             #endregion
 
             #region Cutting
 
-            try
+            if (useMagick)
             {
-                //Read the input image to memory.
-                Console.WriteLine("Opening input file...");
-                var baseImage = Image.FromFile(inputPath) as Bitmap;
+                #region Magick
 
                 //Loop trough every zoom level.
-                for (var zoom = minimumZoomLevel; zoom <= maximumZoomLevel; zoom++)
+                for (int zoom = minZoom; zoom <= maxZoom; zoom++)
                 {
                     //Show our progress
-                    Console.Write("Processing zoom level " + zoom);
+                    Console.Write("Processing zoom level " + zoom + (debug ? "\n" : ""));
 
                     //Caclucate the number of tiles we're processing in this zoom level.
-                    var tiles = 1 << zoom;
+                    int tiles = 1 << zoom;
 
                     //Calculate the source-tilesize
-                    var tileWidth = (float) baseImage.Width/tiles;
-                    var tileHeight = (float) baseImage.Height/tiles;
+                    double tileWidth = size.Width/tiles;
+                    double tileHeight = size.Height/tiles;
 
                     //Keep track of our progress
-                    var progress = 0;
+                    int progress = 0;
 
                     //Loop trough every tile X/Y
-                    for (var tileX = 0; tileX < tiles; tileX++)
-                        for (var tileY = 0; tileY < tiles; tileY++)
+                    for (int tileX = 0; tileX < tiles; tileX++)
+                        for (int tileY = 0; tileY < tiles; tileY++)
                         {
-                            //Create a new bitmap of the source-tilesize
-                            var baseTile = new Bitmap((int) Math.Floor(tileWidth), (int) Math.Floor(tileHeight));
-                            using (Graphics g = Graphics.FromImage(baseTile))
+                            string outputFile = Path.Combine(outputPath,
+                                string.Format("{0}.{1}.{2}.{3}.{4}", baseName, zoom, tileX, tileY, extension));
+
+                            //Don't mind cutting if on zoom level 0
+                            string magickArgs;
+                            if (zoom == 0)
+                                magickArgs = string.Format("\"{0}\" -resize {1}x{1}! \"{2}\"", inputPath,
+                                    targetSize, outputFile);
+                            else
+                                magickArgs =
+                                    string.Format(
+                                        "\"{0}\" +clone -crop {1}x{2}+{3}+{4} +repage -resize {5}x{5}! -composite \"{6}\"",
+                                        inputPath,
+                                        Math.Floor(tileWidth), Math.Floor(tileHeight),
+                                        Math.Floor(tileWidth*tileX), Math.Floor(tileHeight*tileY),
+                                        targetSize,
+                                        outputFile);
+
+                            //Start the magick process
+                            if (debug)
+                                Console.WriteLine("convert {0}", magickArgs);
+
+                            Process magickProcess = Process.Start(new ProcessStartInfo
                             {
-                                //Copy the image from the source
-                                g.DrawImage(baseImage, new RectangleF(0, 0, tileWidth, tileHeight),
-                                    new RectangleF(tileWidth*tileX, tileHeight*tileY, tileWidth, tileHeight),
-                                    GraphicsUnit.Pixel);
-                            }
-
-                            //Resize the tile
-                            var tile = ResizeImage(baseTile, new Size(targetSize, targetSize));
-
-                            //Generate the output filename
-                            var outputFile = string.Format("{0}.{1}.{2}.{3}.{4}", baseName, zoom, tileX, tileY,
-                                outputExtension);
-
-                            //Save the tile
-                            tile.Save(Path.Combine(outputPath, outputFile), outputFormat);
-
-                            //Dispose tile
-                            baseTile.Dispose();
-                            tile.Dispose();
+                                FileName = "magick/convert.exe",
+                                Arguments = magickArgs,
+                                UseShellExecute = false,
+                                CreateNoWindow = true
+                            });
+                            magickProcess.WaitForExit();
 
                             //Update current progress
-                            var currentProgress = ((tileX*tiles + tileY + 1)*5)/(tiles*tiles);
-                            while (progress < currentProgress)
+                            int currentProgress = ((tileX*tiles + tileY + 1)*(maxZoom*2))/(tiles*tiles);
+                            while (progress < currentProgress && !debug)
                             {
                                 progress++;
                                 Console.Write(".");
@@ -227,26 +260,96 @@ namespace SanMap
                     //End line of 'Processing zoom level X.....'
                     Console.WriteLine();
                 }
+
+                #endregion
             }
-            catch (Exception e)
+            else
             {
-                //Whoops!
-                Console.WriteLine();
-                Console.WriteLine("ERROR THROWN: ");
-                Console.Write("\t");
-                Console.WriteLine(e.Message);
+                #region GDI
+
+                try
+                {
+                    //Read the input image to memory.
+                    Console.WriteLine("Opening input file...");
+                    var baseImage = Image.FromFile(inputPath) as Bitmap;
+
+                    //Loop trough every zoom level.
+                    for (int zoom = minZoom; zoom <= maxZoom; zoom++)
+                    {
+                        //Show our progress
+                        Console.Write("Processing zoom level " + zoom);
+
+                        //Caclucate the number of tiles we're processing in this zoom level.
+                        int tiles = 1 << zoom;
+
+                        //Calculate the source-tilesize
+                        float tileWidth = size.Width/tiles;
+                        float tileHeight = size.Height/tiles;
+
+                        //Keep track of our progress
+                        int progress = 0;
+
+                        //Loop trough every tile X/Y
+                        for (int tileX = 0; tileX < tiles; tileX++)
+                            for (int tileY = 0; tileY < tiles; tileY++)
+                            {
+                                //Generate the output filename
+                                string outputFile = Path.Combine(outputPath,
+                                    string.Format("{0}.{1}.{2}.{3}.{4}", baseName, zoom, tileX, tileY, extension));
+
+                                //Create a new bitmap of the source-tilesize
+                                var baseTile = new Bitmap((int) Math.Floor(tileWidth), (int) Math.Floor(tileHeight));
+                                using (Graphics g = Graphics.FromImage(baseTile))
+                                {
+                                    //Copy the image from the source
+                                    g.DrawImage(baseImage, new RectangleF(0, 0, tileWidth, tileHeight),
+                                        new RectangleF(tileWidth*tileX, tileHeight*tileY, tileWidth, tileHeight),
+                                        GraphicsUnit.Pixel);
+                                }
+
+                                //Resize the tile
+                                Bitmap tile = ResizeImage(baseTile, new Size(targetSize, targetSize));
+
+                                //Save the tile
+                                tile.Save(outputFile, format);
+
+                                //Dispose tile
+                                baseTile.Dispose();
+                                tile.Dispose();
+
+                                //Update current progress
+                                int currentProgress = ((tileX*tiles + tileY + 1)*5)/(tiles*tiles);
+                                while (progress < currentProgress)
+                                {
+                                    progress++;
+                                    Console.Write(".");
+                                }
+                            }
+
+                        //End line of 'Processing zoom level X.....'
+                        Console.WriteLine();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Conversion FAILED!");
+                    Console.WriteLine(e.Message);
+                    throw;
+                }
+
+                #endregion
             }
-            finally
-            {
-                Console.WriteLine("Done Processing!");
-            }
+
+            Console.WriteLine("Processing images completed.");
+
             #endregion
         }
 
-        static Bitmap ResizeImage(Image image, Size size)
+
+        private static Bitmap ResizeImage(Image image, Size size)
         {
-            Bitmap newImage = new Bitmap(size.Width, size.Height);
-         
+            var newImage = new Bitmap(size.Width, size.Height);
+
             using (Graphics gr = Graphics.FromImage(newImage))
             {
                 gr.SmoothingMode = SmoothingMode.HighQuality;
@@ -254,10 +357,11 @@ namespace SanMap
                 gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 gr.CompositingQuality = CompositingQuality.HighQuality;
                 gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                using (ImageAttributes wrapMode = new ImageAttributes())
+                using (var wrapMode = new ImageAttributes())
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    gr.DrawImage(image, new Rectangle(0, 0, size.Width, size.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                    gr.DrawImage(image, new Rectangle(0, 0, size.Width, size.Height), 0, 0, image.Width, image.Height,
+                        GraphicsUnit.Pixel, wrapMode);
                 }
             }
 
@@ -265,7 +369,7 @@ namespace SanMap
             return newImage;
         }
 
-        static void ShowHelp(OptionSet p)
+        private static void ShowHelp(OptionSet p)
         {
             //Show usage, options and supported image formats
             Console.WriteLine("Usage: SanMap [OPTIONS]");
