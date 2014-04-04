@@ -318,7 +318,7 @@ namespace SanMap
                                 tile.Dispose();
 
                                 //Update current progress
-                                int currentProgress = ((tileX*tiles + tileY + 1)*5)/(tiles*tiles);
+                                int currentProgress = ((tileX * tiles + tileY + 1) * (maxZoom * 2)) / (tiles * tiles);
                                 while (progress < currentProgress)
                                 {
                                     progress++;
