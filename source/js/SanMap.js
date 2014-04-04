@@ -61,7 +61,7 @@ function SanMapType(minZoom, maxZoom, getTileUrl) {
                 var x = coord.x, y = coord.y, max = 1 << zoom;
                 //If not repeating and x is outside range or y is outside range, return null
                 if (y < 0 || y >= max || (repeating !== true && (x < 0 || x >= max))) {
-                    return null;
+                    return getTileUrl(zoom, -1, -1);
                 }
                 //Get tileX within range
                 for (; x < 0; x += max);
