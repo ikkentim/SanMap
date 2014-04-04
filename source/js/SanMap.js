@@ -48,7 +48,7 @@ function SanMapProjection() {
     //Method to convert Point to LatLng
     this.fromPointToLatLng = function (point) {
         var lng = (point.x - this.pixelOrigin_.x) / this.pixelsPerLonDegree_ / this.scaleLng;
-        var lat = -( point.y - this.pixelOrigin_.y) / this.pixelsPerLonDegree_ / this.scaleLat;
+        var lat = (-point.y + this.pixelOrigin_.y) / this.pixelsPerLonDegree_ / this.scaleLat;
         return new google.maps.LatLng(lat, lng, true);
     }
 };
@@ -107,7 +107,7 @@ function SanMap(canvas, mapTypes, zoom, center, repeating) {
     //If not repeating, bound the viewable area
     if (!repeating) {
         var map = this.map,
-            bounds = new google.maps.LatLngBounds(new google.maps.LatLng(-90, -90), new google.maps.LatLng(90, 90));
+            bounds = new google.maps.LatLngBounds(new google.maps.LatLng(-90,-90), new google.maps.LatLng(90,90));
 
         //When center changed, check if it's within the bounds of the map
         google.maps.event.addListener(map, 'center_changed', function () {
@@ -127,6 +127,14 @@ function SanMap(canvas, mapTypes, zoom, center, repeating) {
     }
 };
 
+//Method to convert GTA positions to google.maps.LatLng objects
 SanMap.getLatLngFromPos = function (x, y) {
-    return new google.maps.LatLng(y / 3000 * 90, x / 3000 * 90);
+    return typeof(x) == "object" 
+		? new google.maps.LatLng(x.y / 3000 * 90, x.x / 3000 * 90) 
+		: new google.maps.LatLng(y / 3000 * 90, x / 3000 * 90);
+}
+
+//Method to convert google.maps.LatLng objects to GTA positions
+SanMap.getPosFromLatLng = function (latLng) {
+    return {x: latLng.lng() * 3000 / 90, y: latLng.lat() * 3000 / 90};
 }
