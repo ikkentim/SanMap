@@ -21,9 +21,11 @@
 <script src="js/SanMap.js"></script>
 <script>
     //Define the mapTypes we'll be using
+	
     var mapType = new SanMapType(1, 5, function (zoom, x, y) {
         return x == -1 && y == -1 ? "tiles/map.outer.png" : "tiles/map." + zoom + "." + x + "." + y + ".png";//Where the tiles are located
     });
+	
     var satType = new SanMapType(1, 5, function (zoom, x, y) {
         return x == -1 && y == -1 ? null : "tiles/sat." + zoom + "." + x + "." + y + ".png";//Where the tiles are located
     });
@@ -45,6 +47,7 @@
 		map: sm.map
 	});
 	google.maps.event.addListener(bankMarker, 'click', function() {
+		sm.map.setCenter(bankMarker.position);
 		bankInfoWindow.open(sm.map,bankMarker);
 	});
 	
@@ -58,6 +61,7 @@
 		map: sm.map
 	});
 	google.maps.event.addListener(bbMarker, 'click', function() {
+		sm.map.setCenter(bbMarker.position);
 		bbInfoWindow.open(sm.map,bbMarker);
 	});
 	
@@ -71,6 +75,7 @@
 		icon: 'http://ikkentim.com/sanmap/green-house.gif'
 	});
 	google.maps.event.addListener(homeMarker, 'click', function() {
+		sm.map.setCenter(homeMarker.position);
 		homeInfoWindow.open(sm.map,homeMarker);
 	});
 	
