@@ -22,7 +22,7 @@
 <script>
     //Define the mapTypes we'll be using
     var mapType = new SanMapType(1, 5, function (zoom, x, y) {
-        return x == -1 && y == -1 ? "tiles/map.outer.jpg" : "tiles/map." + zoom + "." + x + "." + y + ".png";//Where the tiles are located
+        return x == -1 && y == -1 ? "tiles/map.outer.png" : "tiles/map." + zoom + "." + x + "." + y + ".png";//Where the tiles are located
     });
     var satType = new SanMapType(1, 5, function (zoom, x, y) {
         return x == -1 && y == -1 ? null : "tiles/sat." + zoom + "." + x + "." + y + ".png";//Where the tiles are located

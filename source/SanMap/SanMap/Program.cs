@@ -37,6 +37,7 @@ namespace SanMap
             bool useMagick = false;
             bool showHelp = false;
             bool debug = false;
+            bool skipExisting = false;
 
             #region Args checking
 
@@ -59,23 +60,19 @@ namespace SanMap
                     (int value) => maxZoom = value
                 },
                 {
-                    "minimum-zoom=",
+                    "n|minimum-zoom=",
                     "the minimum zoom level (Default: 0)",
                     (int value) => minZoom = value < 0 ? 0 : value
                 },
                 {
                     "s|size|target-size=",
                     "the resulting with/height (Default: 512)",
-                    (int value) => targetSize = value < 8 ? 8 : value
+                    (int value) => targetSize = value < 128 ? 128 : value
                 },
                 {
                     "e|extension|output-extension=",
                     "the output extension (Default: png)",
                     value => extension = value
-                },
-                {
-                    "h|help", "show this message and exit",
-                    value => showHelp = value != null
                 },
                 {
                     "m|magick", "use ImageMagick to process the images",
@@ -84,6 +81,14 @@ namespace SanMap
                 {
                     "d|debug", "show debug information",
                     value => debug = value != null
+                },
+                {
+                    "k|skip", "skip existing tiles",
+                    value => skipExisting = value != null
+                },
+                {
+                    "h|help", "show this message and exit",
+                    value => showHelp = value != null
                 }
             };
 
@@ -217,8 +222,13 @@ namespace SanMap
                     for (int tileX = 0; tileX < tiles; tileX++)
                         for (int tileY = 0; tileY < tiles; tileY++)
                         {
+                            //Generate the output filename
                             string outputFile = Path.Combine(outputPath,
                                 string.Format("{0}.{1}.{2}.{3}.{4}", baseName, zoom, tileX, tileY, extension));
+
+                            //Skip existing
+                            if (skipExisting && File.Exists(outputFile))
+                                continue;
 
                             //Don't mind cutting if on zoom level 0
                             string magickArgs;
@@ -296,6 +306,10 @@ namespace SanMap
                                 //Generate the output filename
                                 string outputFile = Path.Combine(outputPath,
                                     string.Format("{0}.{1}.{2}.{3}.{4}", baseName, zoom, tileX, tileY, extension));
+
+                                //Skip existing
+                                if (skipExisting && File.Exists(outputFile))
+                                    continue;
 
                                 //Create a new bitmap of the source-tilesize
                                 var baseTile = new Bitmap((int) Math.Floor(tileWidth), (int) Math.Floor(tileHeight));
