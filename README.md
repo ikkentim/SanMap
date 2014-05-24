@@ -8,7 +8,7 @@ Release topic: <http://forum.sa-mp.com/showthread.php?t=504181>
 How to use
 ====
 
-1) Render map tiles using binaries/SanMap (e.g. 'SanMap -i INPUT-IMAGE -o OUTPUT-DIR -z 5', use 'SanMap --help' for help)
+1) Render map tiles using binaries/TileCutter.exe
 
 2) Configure SanMap to use these tiles (See index.html)
 
