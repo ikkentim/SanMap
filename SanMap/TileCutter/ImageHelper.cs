@@ -1,23 +1,12 @@
-﻿// SanMap
-// Copyright (C) 2014 Tim Potze
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
-// 
-// For more information, please refer to <http://unlicense.org>
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SanMap
+namespace TileCutter
 {
     public static class ImageHelper
     {
@@ -100,20 +89,20 @@ namespace SanMap
 
         private static short ReadLittleEndianInt16(this BinaryReader binaryReader)
         {
-            var bytes = new byte[sizeof (short)];
-            for (int i = 0; i < sizeof (short); i += 1)
+            var bytes = new byte[sizeof(short)];
+            for (int i = 0; i < sizeof(short); i += 1)
             {
-                bytes[sizeof (short) - 1 - i] = binaryReader.ReadByte();
+                bytes[sizeof(short) - 1 - i] = binaryReader.ReadByte();
             }
             return BitConverter.ToInt16(bytes, 0);
         }
 
         private static int ReadLittleEndianInt32(this BinaryReader binaryReader)
         {
-            var bytes = new byte[sizeof (int)];
-            for (int i = 0; i < sizeof (int); i += 1)
+            var bytes = new byte[sizeof(int)];
+            for (int i = 0; i < sizeof(int); i += 1)
             {
-                bytes[sizeof (int) - 1 - i] = binaryReader.ReadByte();
+                bytes[sizeof(int) - 1 - i] = binaryReader.ReadByte();
             }
             return BitConverter.ToInt32(bytes, 0);
         }
