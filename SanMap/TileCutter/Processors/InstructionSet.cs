@@ -11,22 +11,19 @@
 // 
 // For more information, please refer to <http://unlicense.org>
 
-using System;
-using System.Windows.Forms;
+using System.Drawing.Imaging;
 
-namespace TileCutter
+namespace TileCutter.Processors
 {
-    internal static class Program
+    internal struct InstructionSet
     {
-        /// <summary>
-        ///     The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
-        }
+        public string InputPath { get; set; }
+        public string OutputDirectory { get; set; }
+        public string OutputName { get; set; }
+        public int OutputSize { get; set; }
+        public ImageFormat OutputFormat { get; set; }
+        public int MinimumZoom { get; set; }
+        public int MaximumZoom { get; set; }
+        public bool SkipExisting { get; set; }
     }
 }

@@ -12,21 +12,15 @@
 // For more information, please refer to <http://unlicense.org>
 
 using System;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
-namespace TileCutter
+namespace TileCutter.Processors
 {
-    internal static class Program
+    internal interface IProcessor
     {
-        /// <summary>
-        ///     The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
-        }
+        event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+
+        bool Validate(InstructionSet instructions);
+        Task<bool> StartProcessing(InstructionSet instructions);
     }
 }

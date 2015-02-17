@@ -1,368 +1,188 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿// SanMap
+// Copyright 2015 Tim Potze
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+// 
+// For more information, please refer to <http://unlicense.org>
+
+using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TileCutter.Processors;
 
 namespace TileCutter
 {
     public partial class MainForm : Form
     {
+        private readonly IProcessor[] _processors =
+        {
+            new GDI(),
+            new ImageMagick64(),
+            new ImageMagick32()
+        };
+
         public MainForm()
         {
             InitializeComponent();
+
+            // Add image processors
+            processorComboBox.Items.AddRange(_processors);
+            foreach (IProcessor p in _processors)
+                p.ProgressChanged += OnProgressChanged;
+
+            //Set default options
+            processorComboBox.SelectedIndex = 0;
             outputTypeComboBox.SelectedIndex = 0;
 
-            minZoomNumericUpDown.ValueChanged +=
-                (sender, args) => maxZoomNumericUpDown.Minimum = minZoomNumericUpDown.Value;
-
-            inputPathBrowseButton.Click += (sender, args) =>
-            {
-                if (openFileDialog.ShowDialog(this) == DialogResult.OK)
-                    inputPathTextBox.Text = openFileDialog.FileName;
-            };
-
-            outputPathBrowseButton.Click += (sender, args) =>
-            {
-                if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
-                    outputPathTextBox.Text = folderBrowserDialog.SelectedPath;
-            };
-
+            //Set default directories
+            folderBrowserDialog.SelectedPath = Directory.GetCurrentDirectory();
             openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openFileDialog.RestoreDirectory = true;
-
-            folderBrowserDialog.SelectedPath = Directory.GetCurrentDirectory();
         }
 
-        public bool ValidityChecks()
+        private async void OnProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //Input file
-            if (!File.Exists(inputPathTextBox.Text))
-            {
-                MessageBox.Show("Input file does not exist.", "SanMap", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            if (!new[] { ".bmp", ".png", ".jpg", ".gif" }.Contains(Path.GetExtension(inputPathTextBox.Text)))
-            {
-                MessageBox.Show("Unknown filetype.", "SanMap", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;                
-            }
-
-            //Output path
-            if (!Directory.Exists(outputPathTextBox.Text))
-            {
-                MessageBox.Show("Output path does not exist.", "SanMap", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;             
-            }
-
-            //Success
-            return true;
-        }
-
-        private void startButton_Click(object sender, EventArgs e)
-        {
-            //Check input
-            if (!ValidityChecks())
-                return;
-
-            optionsGroupBox.Enabled = false;
-
-            toolStripStatusLabel.Text = "Setting up";
-
-
-            var inputPath = inputPathTextBox.Text;
-            var outputPath = outputPathTextBox.Text;
-
-            bool useMagick = magickCheckBox.Checked;
-            bool skipExisting = skipExistingcheckBox.Checked;
-
-            var baseName = Path.GetFileNameWithoutExtension(inputPath);
-
-            var outputSize = (int) targetSizeNumericUpDown.Value;
-            var minZoom = (int) minZoomNumericUpDown.Value;
-            var maxZoom = (int) maxZoomNumericUpDown.Value;
-
-            string outputExtension;
-            ImageFormat outputFormat;
-            switch (outputTypeComboBox.SelectedIndex)
-            {
-                default:
-                    outputExtension = ".png";
-                    outputFormat = ImageFormat.Png;
-                    break;
-                case 1:
-                    outputExtension = ".bmp";
-                    outputFormat = ImageFormat.Bmp;
-                    break;
-                case 2:
-                    outputExtension = ".jpg";
-                    outputFormat = ImageFormat.Jpeg;
-                    break;
-                case 3:
-                    outputExtension = ".gif";
-                    outputFormat = ImageFormat.Gif;
-                    break;
-            }
-
-            //Process image
-            Process(inputPath, outputPath, outputSize, minZoom, maxZoom, useMagick, skipExisting, baseName, outputExtension, outputFormat);
-        }
-
-        public void UpdateStatus(int perc, string stat)
-        {
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 if (statusStrip1.InvokeRequired)
                     statusStrip1.Invoke((MethodInvoker) delegate
                     {
-                        toolStripProgressBar.Value = perc > toolStripProgressBar.Maximum ? toolStripProgressBar.Maximum : perc;
-                        toolStripStatusLabel.Text = stat;
+                        toolStripProgressBar.Value = e.NewProgress > toolStripProgressBar.Maximum
+                            ? toolStripProgressBar.Maximum
+                            : e.NewProgress;
+                        toolStripStatusLabel.Text = e.ProgressStatus;
                     });
                 else
                 {
-                    toolStripProgressBar.Value = perc > toolStripProgressBar.Maximum ? toolStripProgressBar.Maximum : perc;
-                    toolStripStatusLabel.Text = stat;
+                    toolStripProgressBar.Value = e.NewProgress > toolStripProgressBar.Maximum
+                        ? toolStripProgressBar.Maximum
+                        : e.NewProgress;
+                    toolStripStatusLabel.Text = e.ProgressStatus;
                 }
             });
         }
 
-        public void Process(string inputPath, string outputPath, int outputSize, int minZoom, int maxZoom, bool useMagick, bool skipExisting, string baseName, string outputExtension, ImageFormat outputFormat)
+        #region Calculators
+
+        private void CalculateMaxZoom()
         {
-            Task.Run(() =>
-            {
-                Size inputSize = ImageHelper.GetDimensions(inputPath);
+            Size? size = ImageHelper.GetDimensions(inputPathTextBox.Text);
+            if (size == null) return;
 
-                UpdateStatus(0, "Working");
-
-                bool success = useMagick
-                    ? ProcessMagick(inputPath, outputPath, outputSize, minZoom, maxZoom, skipExisting, inputSize,
-                        baseName, outputExtension, outputFormat)
-                    : ProcessGDI(inputPath, outputPath, outputSize, minZoom, maxZoom, skipExisting, inputSize, baseName,
-                        outputExtension, outputFormat);
-
-                //Success
-                UpdateStatus(0, "Ready");
-                optionsGroupBox.Invoke((MethodInvoker) delegate
-                {
-                    optionsGroupBox.Enabled = true;
-                    if (success)
-                        MessageBox.Show("Successfully processed images.", "SanMap", MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
-                    else
-                    {
-                        MessageBox.Show("Failed to process images.", "SanMap", MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                    }
-                });
-
-            });
-
+            int max = CalculateMaxZoom(size.Value.Width, (int) targetSizeNumericUpDown.Value);
+            minZoomNumericUpDown.Maximum = max;
+            maxZoomNumericUpDown.Maximum = max;
         }
 
-        #region Imagemagick
-        public bool ProcessMagick(string inputPath, string outputPath, int outputSize, int minZoom, int maxZoom,
-            bool skipExisting, Size inputSize, string baseName, string outputExtension, ImageFormat outputFormat)
+        private int CalculateMaxZoom(int size, int tileSize)
         {
-                const int maxArgsLength = 6000;
+            int zoom = 0;
+            while ((size /= 2) > tileSize) zoom++;
+            return zoom;
+        }
 
-                //Queue of magick commands
-                List<string> magickQueue = new List<string>();
-                var startArgs = "\"" + inputPath + "\" ";
+        private IProcessor GetProcessor()
+        {
+            return processorComboBox.SelectedItem as IProcessor;
+        }
 
-                //Loop trough every zoom level.
-            for (int zoom = minZoom; zoom <= maxZoom; zoom++)
+        private ImageFormat GetImageFormat()
+        {
+            switch (outputTypeComboBox.SelectedIndex)
             {
-                //Show our progress
-                UpdateStatus(0, "Processing zoom " + zoom);
-
-                //Caclucate the number of tiles we're processing in this zoom level.
-                int tiles = 1 << zoom;
-
-                //Calculate the source-tilesize
-                double tileWidth = inputSize.Width/tiles;
-                double tileHeight = inputSize.Height / tiles;
-
-                //Keep track of our progress
-                int progress = 0;
-
-                //Loop trough every tile X/Y
-                for (int tileX = 0; tileX < tiles; tileX++)
-                    for (int tileY = 0; tileY < tiles; tileY++)
-                    {
-                        //Generate the output filename
-                        string outputFile = Path.Combine(outputPath,
-                            string.Format("{0}.{1}.{2}.{3}{4}", baseName, zoom, tileX, tileY, outputExtension));
-
-                        //Skip existing
-                        if (skipExisting && File.Exists(outputFile))
-                            continue;
-
-                        //Don't mind cutting if on zoom level 0
-                        string magickArgs;
-                        if (zoom == 0)
-                            magickArgs = string.Format("( +clone -resize {0}x{0}! -write \"{1}\" +delete )",
-                                outputSize, outputFile);
-                        else
-                            magickArgs =
-                                string.Format(
-                                    "( +clone -crop {0}x{1}+{2}+{3} +repage -resize {4}x{4}! -write \"{5}\" +delete )",
-                                    Math.Floor(tileWidth), Math.Floor(tileHeight),
-                                    Math.Floor(tileWidth*tileX), Math.Floor(tileHeight*tileY),
-                                    outputSize,
-                                    outputFile);
-
-                        //Check if the queue isn't full, if it is, process it
-                        if (magickQueue.Sum(s => s.Length + 1) + magickArgs.Length + startArgs.Length >
-                            maxArgsLength)
-                        {
-                            RunMagick(startArgs, magickQueue);
-                            magickQueue.Clear();
-                        }
-
-                        //Add command to queue
-                        magickQueue.Add(magickArgs);
-
-                        //Update current progress
-                        int currentProgress = ((tileX*tiles + tileY + 1)*100)/(tiles*tiles);
-                        
-                        UpdateStatus(currentProgress, "Processing zoom " + zoom);
-                 
-                    }
-
-                //Process last commands of the zoom level
-                if (magickQueue.Count <= 0) continue;
-                RunMagick(startArgs, magickQueue);
-                magickQueue.Clear();
+                default:
+                    return ImageFormat.Png;
+                case 1:
+                    return ImageFormat.Bmp;
+                case 2:
+                    return ImageFormat.Jpeg;
+                case 3:
+                    return ImageFormat.Gif;
             }
-
-            return true;
-        }
-
-        private static void RunMagick(string start, IEnumerable<string> batch)
-        {
-            RunMagick(start + string.Join(" ", batch));
-        }
-
-        private static void RunMagick( string args)
-        {
-            //Start the magick process
-            Process magickProcess = System.Diagnostics.Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory + "/", "magick/convert.exe"),
-                Arguments = args,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            });
-
-            magickProcess.OutputDataReceived += (sender, eventArgs) => Debug.Write((eventArgs.Data));
-
-            magickProcess.WaitForExit();    
         }
 
         #endregion
 
-        #region GDI
+        #region Component handlers
 
-        public bool ProcessGDI(string inputPath, string outputPath, int outputSize, int minZoom, int maxZoom,
-            bool skipExisting, Size inputSize, string baseName, string outputExtension, ImageFormat outputFormat)
+        private async void startButton_Click(object sender, EventArgs e)
         {
-            try
+            var instr = new InstructionSet
             {
-                //Read the input image to memory.
-                var baseImage = Image.FromFile(inputPath) as Bitmap;
+                InputPath = inputPathTextBox.Text,
+                OutputDirectory = outputPathTextBox.Text,
+                OutputSize = (int) targetSizeNumericUpDown.Value,
+                OutputFormat = GetImageFormat(),
+                MaximumZoom = (int) maxZoomNumericUpDown.Value,
+                MinimumZoom = (int) minZoomNumericUpDown.Value,
+                OutputName = Path.GetFileNameWithoutExtension(inputPathTextBox.Text),
+                SkipExisting = skipExistingcheckBox.Checked
+            };
 
-                //Loop trough every zoom level.
-                for (int zoom = minZoom; zoom <= maxZoom; zoom++)
-                {
-                    UpdateStatus(0, "Processing zoom " + zoom);
-      
-                    //Caclucate the number of tiles we're processing in this zoom level.
-                    int tiles = 1 << zoom;
-
-                    //Calculate the source-tilesize
-                    float tileWidth = inputSize.Width/tiles;
-                    float tileHeight = inputSize.Height/tiles;
-
-                    //Keep track of our progress
-                    int progress = 0;
-
-                    //Loop trough every tile X/Y
-                    for (int tileX = 0; tileX < tiles; tileX++)
-                        for (int tileY = 0; tileY < tiles; tileY++)
-                        {
-                            //Generate the output filename
-                            string outputFile = Path.Combine(outputPath,
-                                string.Format("{0}.{1}.{2}.{3}{4}", baseName, zoom, tileX, tileY, outputExtension));
-
-                            //Skip existing
-                            if (skipExisting && File.Exists(outputFile))
-                                continue;
-
-                            //Create a new bitmap of the source-tilesize
-                            var baseTile = new Bitmap((int) Math.Floor(tileWidth), (int) Math.Floor(tileHeight));
-                            using (Graphics g = Graphics.FromImage(baseTile))
-                            {
-                                //Copy the image from the source
-                                g.DrawImage(baseImage, new RectangleF(0, 0, tileWidth, tileHeight),
-                                    new RectangleF(tileWidth*tileX, tileHeight*tileY, tileWidth, tileHeight),
-                                    GraphicsUnit.Pixel);
-                            }
-
-                            //Resize the tile
-                            Bitmap tile = ResizeImage(baseTile, new Size(outputSize, outputSize));
-
-                            //Save the tile
-                            tile.Save(outputFile, outputFormat);
-
-                            //Dispose tile
-                            baseTile.Dispose();
-                            tile.Dispose();
-
-                            //Update current progress
-                            int currentProgress = ((tileX * tiles + tileY + 1) * 100) / (tiles * tiles);
-                            UpdateStatus(currentProgress, "Processing zoom " + zoom);
-                        }
-                }
-            }
-            catch (Exception e)
+            if (!GetProcessor().Validate(instr))
             {
-                return false;
+                MessageBox.Show(this, "Invalid input.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
-            return true;
+            optionsGroupBox.Enabled = false;
+
+            toolStripProgressBar.Value = 0;
+            toolStripStatusLabel.Text = "Starting...";
+
+            await GetProcessor().StartProcessing(instr);
+
+            toolStripProgressBar.Value = 0;
+            toolStripStatusLabel.Text = "Done!";
+
+            optionsGroupBox.Enabled = true;
         }
 
-        private static Bitmap ResizeImage(Image image, Size size)
+        private void inputPathBrowseButton_Click(object sender, EventArgs e)
         {
-            var newImage = new Bitmap(size.Width, size.Height);
+            if (openFileDialog.ShowDialog(this) != DialogResult.OK) return;
 
-            using (Graphics gr = Graphics.FromImage(newImage))
+            inputPathTextBox.Text = openFileDialog.FileName;
+
+            Size? size = ImageHelper.GetDimensions(inputPathTextBox.Text);
+
+            if (size == null) return;
+            if (size.Value.Width != size.Value.Height)
             {
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    gr.DrawImage(image, new Rectangle(0, 0, size.Width, size.Height), 0, 0, image.Width, image.Height,
-                        GraphicsUnit.Pixel, wrapMode);
-                }
+                inputPathTextBox.Text = null;
+                MessageBox.Show(this, "Image must be square!", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
             }
 
-            //return the resulting bitmap
-            return newImage;
+            CalculateMaxZoom();
+        }
+
+        private void outputPathBrowseButton_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
+                outputPathTextBox.Text = folderBrowserDialog.SelectedPath;
+        }
+
+        private void minZoomNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            maxZoomNumericUpDown.Minimum = minZoomNumericUpDown.Value;
+        }
+
+        private void targetSizeNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            CalculateMaxZoom();
         }
 
         #endregion
-
     }
 }

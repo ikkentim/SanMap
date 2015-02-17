@@ -12,21 +12,18 @@
 // For more information, please refer to <http://unlicense.org>
 
 using System;
-using System.Windows.Forms;
 
-namespace TileCutter
+namespace TileCutter.Processors
 {
-    internal static class Program
+    internal class ProgressChangedEventArgs : EventArgs
     {
-        /// <summary>
-        ///     The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main()
+        public ProgressChangedEventArgs(int newProgress, string progressStatus)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            NewProgress = newProgress;
+            ProgressStatus = progressStatus;
         }
+
+        public int NewProgress { get; private set; }
+        public string ProgressStatus { get; private set; }
     }
 }

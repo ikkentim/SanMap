@@ -84,13 +84,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ImageHelper.cs" />
+    <Compile Include="Processors\ImageHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Processors\GDI.cs" />
+    <Compile Include="Processors\ImageDefaults.cs" />
+    <Compile Include="Processors\ImageMagick.cs" />
+    <Compile Include="Processors\ImageMagick32.cs" />
+    <Compile Include="Processors\ImageMagick64.cs" />
+    <Compile Include="Processors\InstructionSet.cs" />
+    <Compile Include="Processors\IProcessor.cs" />
+    <Compile Include="Processors\ProgressChangedEventArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">

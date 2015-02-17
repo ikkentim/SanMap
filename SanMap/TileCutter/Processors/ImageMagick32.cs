@@ -11,22 +11,21 @@
 // 
 // For more information, please refer to <http://unlicense.org>
 
-using System;
-using System.Windows.Forms;
-
-namespace TileCutter
+namespace TileCutter.Processors
 {
-    internal static class Program
+    internal class ImageMagick32 : ImageMagick
     {
-        /// <summary>
-        ///     The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main()
+        public ImageMagick32() : base("magick32")
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
         }
+
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return "ImageMagick 32 bits";
+        }
+
+        #endregion
     }
 }

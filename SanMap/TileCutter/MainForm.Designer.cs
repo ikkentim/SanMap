@@ -1,4 +1,6 @@
-﻿namespace TileCutter
+﻿using TileCutter.Processors;
+
+namespace TileCutter
 {
     partial class MainForm
     {
@@ -30,6 +32,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.skipExistingcheckBox = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.outputTypeComboBox = new System.Windows.Forms.ComboBox();
             this.targetSizeNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -43,16 +46,16 @@
             this.outputPathBrowseButton = new System.Windows.Forms.Button();
             this.outputPathTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.magickCheckBox = new System.Windows.Forms.CheckBox();
             this.inputPathBrowseButton = new System.Windows.Forms.Button();
             this.inputPathTextBox = new System.Windows.Forms.TextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.skipExistingcheckBox = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.label7 = new System.Windows.Forms.Label();
+            this.processorComboBox = new System.Windows.Forms.ComboBox();
             this.optionsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.targetSizeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxZoomNumericUpDown)).BeginInit();
@@ -63,6 +66,8 @@
             // 
             // optionsGroupBox
             // 
+            this.optionsGroupBox.Controls.Add(this.label7);
+            this.optionsGroupBox.Controls.Add(this.processorComboBox);
             this.optionsGroupBox.Controls.Add(this.skipExistingcheckBox);
             this.optionsGroupBox.Controls.Add(this.label6);
             this.optionsGroupBox.Controls.Add(this.outputTypeComboBox);
@@ -77,16 +82,25 @@
             this.optionsGroupBox.Controls.Add(this.outputPathBrowseButton);
             this.optionsGroupBox.Controls.Add(this.outputPathTextBox);
             this.optionsGroupBox.Controls.Add(this.label1);
-            this.optionsGroupBox.Controls.Add(this.magickCheckBox);
             this.optionsGroupBox.Controls.Add(this.inputPathBrowseButton);
             this.optionsGroupBox.Controls.Add(this.inputPathTextBox);
             this.optionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.optionsGroupBox.Location = new System.Drawing.Point(0, 0);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(277, 251);
+            this.optionsGroupBox.Size = new System.Drawing.Size(277, 258);
             this.optionsGroupBox.TabIndex = 0;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Options";
+            // 
+            // skipExistingcheckBox
+            // 
+            this.skipExistingcheckBox.AutoSize = true;
+            this.skipExistingcheckBox.Location = new System.Drawing.Point(6, 224);
+            this.skipExistingcheckBox.Name = "skipExistingcheckBox";
+            this.skipExistingcheckBox.Size = new System.Drawing.Size(106, 17);
+            this.skipExistingcheckBox.TabIndex = 11;
+            this.skipExistingcheckBox.Text = "Skip existing files";
+            this.skipExistingcheckBox.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -106,7 +120,7 @@
             this.outputTypeComboBox.Items.AddRange(new object[] {
             ".PNG",
             ".BMP",
-            ".JPG",
+            ".JPEG",
             ".GIF"});
             this.outputTypeComboBox.Location = new System.Drawing.Point(113, 98);
             this.outputTypeComboBox.Name = "outputTypeComboBox";
@@ -115,7 +129,7 @@
             // 
             // targetSizeNumericUpDown
             // 
-            this.targetSizeNumericUpDown.Location = new System.Drawing.Point(113, 175);
+            this.targetSizeNumericUpDown.Location = new System.Drawing.Point(113, 202);
             this.targetSizeNumericUpDown.Maximum = new decimal(new int[] {
             2048,
             0,
@@ -134,11 +148,12 @@
             0,
             0,
             0});
+            this.targetSizeNumericUpDown.ValueChanged += new System.EventHandler(this.targetSizeNumericUpDown_ValueChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 177);
+            this.label5.Location = new System.Drawing.Point(6, 204);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(62, 13);
             this.label5.TabIndex = 8;
@@ -156,7 +171,7 @@
             // 
             // maxZoomNumericUpDown
             // 
-            this.maxZoomNumericUpDown.Location = new System.Drawing.Point(113, 151);
+            this.maxZoomNumericUpDown.Location = new System.Drawing.Point(113, 178);
             this.maxZoomNumericUpDown.Maximum = new decimal(new int[] {
             32,
             0,
@@ -174,7 +189,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 153);
+            this.label4.Location = new System.Drawing.Point(6, 180);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(83, 13);
             this.label4.TabIndex = 6;
@@ -183,7 +198,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 127);
+            this.label3.Location = new System.Drawing.Point(6, 154);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(80, 13);
             this.label3.TabIndex = 2;
@@ -191,7 +206,7 @@
             // 
             // minZoomNumericUpDown
             // 
-            this.minZoomNumericUpDown.Location = new System.Drawing.Point(113, 125);
+            this.minZoomNumericUpDown.Location = new System.Drawing.Point(113, 152);
             this.minZoomNumericUpDown.Maximum = new decimal(new int[] {
             32,
             0,
@@ -200,6 +215,7 @@
             this.minZoomNumericUpDown.Name = "minZoomNumericUpDown";
             this.minZoomNumericUpDown.Size = new System.Drawing.Size(46, 20);
             this.minZoomNumericUpDown.TabIndex = 0;
+            this.minZoomNumericUpDown.ValueChanged += new System.EventHandler(this.minZoomNumericUpDown_ValueChanged);
             // 
             // label2
             // 
@@ -218,6 +234,7 @@
             this.outputPathBrowseButton.TabIndex = 4;
             this.outputPathBrowseButton.Text = "Browse...";
             this.outputPathBrowseButton.UseVisualStyleBackColor = true;
+            this.outputPathBrowseButton.Click += new System.EventHandler(this.outputPathBrowseButton_Click);
             // 
             // outputPathTextBox
             // 
@@ -237,16 +254,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Input image:";
             // 
-            // magickCheckBox
-            // 
-            this.magickCheckBox.AutoSize = true;
-            this.magickCheckBox.Location = new System.Drawing.Point(6, 201);
-            this.magickCheckBox.Name = "magickCheckBox";
-            this.magickCheckBox.Size = new System.Drawing.Size(115, 17);
-            this.magickCheckBox.TabIndex = 0;
-            this.magickCheckBox.Text = "Use Image Magick";
-            this.magickCheckBox.UseVisualStyleBackColor = true;
-            // 
             // inputPathBrowseButton
             // 
             this.inputPathBrowseButton.Location = new System.Drawing.Point(165, 30);
@@ -255,6 +262,7 @@
             this.inputPathBrowseButton.TabIndex = 0;
             this.inputPathBrowseButton.Text = "Browse...";
             this.inputPathBrowseButton.UseVisualStyleBackColor = true;
+            this.inputPathBrowseButton.Click += new System.EventHandler(this.inputPathBrowseButton_Click);
             // 
             // inputPathTextBox
             // 
@@ -270,28 +278,23 @@
             this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Filter = "Images|*.bmp;*.png;*.jpg;*.gif";
             // 
-            // skipExistingcheckBox
-            // 
-            this.skipExistingcheckBox.AutoSize = true;
-            this.skipExistingcheckBox.Location = new System.Drawing.Point(6, 224);
-            this.skipExistingcheckBox.Name = "skipExistingcheckBox";
-            this.skipExistingcheckBox.Size = new System.Drawing.Size(106, 17);
-            this.skipExistingcheckBox.TabIndex = 11;
-            this.skipExistingcheckBox.Text = "Skip existing files";
-            this.skipExistingcheckBox.UseVisualStyleBackColor = true;
-            // 
             // statusStrip1
             // 
             this.statusStrip1.GripMargin = new System.Windows.Forms.Padding(0);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripProgressBar,
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 251);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 258);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(277, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripProgressBar
+            // 
+            this.toolStripProgressBar.Name = "toolStripProgressBar";
+            this.toolStripProgressBar.Size = new System.Drawing.Size(130, 16);
             // 
             // toolStripStatusLabel
             // 
@@ -299,25 +302,40 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(76, 17);
             this.toolStripStatusLabel.Text = "By Tim Potze";
             // 
-            // toolStripProgressBar
-            // 
-            this.toolStripProgressBar.Name = "toolStripProgressBar";
-            this.toolStripProgressBar.Size = new System.Drawing.Size(130, 16);
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.optionsGroupBox);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(277, 251);
+            this.panel1.Size = new System.Drawing.Size(277, 258);
             this.panel1.TabIndex = 3;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 128);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(57, 13);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Processor:";
+            // 
+            // processorComboBox
+            // 
+            this.processorComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.processorComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.processorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.processorComboBox.FormattingEnabled = true;
+            this.processorComboBox.Location = new System.Drawing.Point(113, 125);
+            this.processorComboBox.Name = "processorComboBox";
+            this.processorComboBox.Size = new System.Drawing.Size(127, 21);
+            this.processorComboBox.TabIndex = 12;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(277, 273);
+            this.ClientSize = new System.Drawing.Size(277, 280);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -347,7 +365,6 @@
         private System.Windows.Forms.Button outputPathBrowseButton;
         private System.Windows.Forms.TextBox outputPathTextBox;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox magickCheckBox;
         private System.Windows.Forms.Button inputPathBrowseButton;
         private System.Windows.Forms.TextBox inputPathTextBox;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
@@ -366,6 +383,8 @@
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox processorComboBox;
     }
 }
 
