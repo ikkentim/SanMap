@@ -22,16 +22,27 @@ namespace TileCutter.Processors
         {
             Size? dim = ImageHelper.GetDimensions(instructions.InputPath);
             return File.Exists(instructions.InputPath) &&
+                   Directory.Exists(instructions.OutputDirectory) &&
                    dim != null &&
                    dim.Value.Width == dim.Value.Height &&
                    IsValidSize(instructions.OutputSize);
         }
 
-        private static bool IsValidSize(int size)
+        public static bool IsValidSize(int size)
         {
             int s = 2;
             while (s < size) s *= 2;
             return size == s;
+        }
+
+        public static int TotalTiles(int minZoom, int maxZoom)
+        {
+            int result = 0;
+
+            for (int z = minZoom; z <= maxZoom; z++)
+                result += (1 << z);
+
+            return result;
         }
     }
 }

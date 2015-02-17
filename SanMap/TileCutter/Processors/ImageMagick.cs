@@ -79,12 +79,11 @@ namespace TileCutter.Processors
 
             return await Task<bool>.Run(() =>
             {
+                int processed = 0;
                 for (int zoom = minZoom; zoom <= maxZoom; zoom++)
                 {
                     if (ProgressChanged != null)
-                        ProgressChanged(this,
-                            new ProgressChangedEventArgs((zoom - minZoom)*(100/(maxZoom - minZoom)),
-                                "Processing zoom " + zoom));
+                        ProgressChanged(this, new ProgressChangedEventArgs(processed, "Processing zoom " + zoom));
 
                     int tiles = 1 << zoom;
 
@@ -95,8 +94,7 @@ namespace TileCutter.Processors
 
                     if (ProgressChanged != null)
                         ProgressChanged(this,
-                            new ProgressChangedEventArgs((zoom + 1 - minZoom)*(100/(maxZoom - minZoom)),
-                                "Processing zoom " + zoom));
+                            new ProgressChangedEventArgs(processed += tiles, "Processing zoom " + zoom));
                 }
 
                 return true;

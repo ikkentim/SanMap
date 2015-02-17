@@ -55,10 +55,11 @@ namespace TileCutter.Processors
                 {
                     var baseImage = Image.FromFile(inputPath) as Bitmap;
 
+                    int processed = 0;
                     for (int zoom = minZoom; zoom <= maxZoom; zoom++)
                     {
                         if (ProgressChanged != null)
-                            ProgressChanged(this, new ProgressChangedEventArgs(0, "Processing zoom " + zoom));
+                            ProgressChanged(this, new ProgressChangedEventArgs(processed, "Processing zoom " + zoom));
 
                         int tiles = 1 << zoom;
 
@@ -90,8 +91,7 @@ namespace TileCutter.Processors
 
                                 if (ProgressChanged != null)
                                     ProgressChanged(this,
-                                        new ProgressChangedEventArgs(((tileX*tiles + tileY + 1)*100)/(tiles*tiles),
-                                            "Processing zoom " + zoom));
+                                        new ProgressChangedEventArgs(++processed, "Processing zoom " + zoom));
                             }
                     }
 
