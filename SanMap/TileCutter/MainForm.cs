@@ -27,7 +27,8 @@ namespace TileCutter
         {
             new GDI(),
             new ImageMagick64(),
-            new ImageMagick32()
+            new ImageMagick32(),
+            new OpenStreetMaps(), 
         };
 
         public MainForm()
@@ -56,16 +57,12 @@ namespace TileCutter
                 if (statusStrip1.InvokeRequired)
                     statusStrip1.Invoke((MethodInvoker) delegate
                     {
-                        toolStripProgressBar.Value = e.NewProgress > toolStripProgressBar.Maximum
-                            ? toolStripProgressBar.Maximum
-                            : e.NewProgress;
+                        toolStripProgressBar.Value = Math.Min(e.NewProgress, toolStripProgressBar.Maximum);
                         toolStripStatusLabel.Text = e.ProgressStatus;
                     });
                 else
                 {
-                    toolStripProgressBar.Value = e.NewProgress > toolStripProgressBar.Maximum
-                        ? toolStripProgressBar.Maximum
-                        : e.NewProgress;
+                    toolStripProgressBar.Value = Math.Min(e.NewProgress, toolStripProgressBar.Maximum);
                     toolStripStatusLabel.Text = e.ProgressStatus;
                 }
             });
@@ -76,7 +73,13 @@ namespace TileCutter
         private void CalculateMaxZoom()
         {
             Size? size = ImageHelper.GetDimensions(inputPathTextBox.Text);
-            if (size == null) return;
+            if (size == null)
+            {
+                minZoomNumericUpDown.Maximum = 100;
+                maxZoomNumericUpDown.Maximum = 100;
+
+                return;
+            }
 
             int max = CalculateMaxZoom(size.Value.Width, (int) targetSizeNumericUpDown.Value);
             minZoomNumericUpDown.Maximum = max;
@@ -125,7 +128,9 @@ namespace TileCutter
                 MaximumZoom = (int) maxZoomNumericUpDown.Value,
                 MinimumZoom = (int) minZoomNumericUpDown.Value,
                 OutputName = Path.GetFileNameWithoutExtension(inputPathTextBox.Text),
-                SkipExisting = skipExistingcheckBox.Checked
+                SkipExisting = skipExistingcheckBox.Checked,
+                MapSize = Convert.ToDouble(mapSizeNumericUpDown.Value),
+                PreprocessorResizeFactor = Convert.ToInt32(resizeFactorNumericUpDown.Value)
             };
 
             if (!GetProcessor().Validate(instr))
@@ -137,12 +142,18 @@ namespace TileCutter
             optionsGroupBox.Enabled = false;
 
             toolStripProgressBar.Value = 0;
+            toolStripProgressBar.Maximum = ImageDefaults.TotalTiles(instr.MinimumZoom, instr.MaximumZoom);
             toolStripStatusLabel.Text = "Starting...";
 
-            await GetProcessor().StartProcessing(instr);
+            bool result = await GetProcessor().StartProcessing(instr);
 
             toolStripProgressBar.Value = 0;
             toolStripStatusLabel.Text = "Done!";
+
+            if (!result)
+            {
+                MessageBox.Show(this, "Processing failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             optionsGroupBox.Enabled = true;
         }
@@ -183,6 +194,11 @@ namespace TileCutter
             CalculateMaxZoom();
         }
 
+        private void processorComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CalculateMaxZoom();
+        }
         #endregion
+
     }
 }
