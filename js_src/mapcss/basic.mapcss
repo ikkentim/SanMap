@@ -1,0 +1,274 @@
+/* z7: zoom=0
+ * z8: zoom=1
+ * z9: zoom=2
+ * ..: ...
+ */
+
+canvas {
+    background-color: #a3c3ec;
+    default-points: false;
+    default-lines: false;
+}
+
+/* ===== Placenames ===== */
+node[place=neighbourhood] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: black;
+    font-size: 12;
+}
+    
+node[place=suburb] {
+text: name;
+text-color: #534d38;
+text-halo-radius: 1;
+text-halo-color: black;
+font-size: 13;
+}
+
+node[place=farm] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: white;
+    font-size: 12;
+}
+
+node[place=isolated_dwelling] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: white;
+    font-size: 12;
+}
+
+node[place=hamlet] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: white;
+    font-size: 14;
+}
+
+node[place=village] {
+    text: name;
+    text-color: #534d38; 
+    text-halo-radius: 2;
+    text-halo-color: white;
+    font-size: 16;
+}
+
+node[place=town] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 2;
+    text-halo-color: white;
+    font-size: 18;
+}
+
+node[place=city] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 2;
+    text-halo-color: white;
+    font-size: 22;
+}
+
+/* ===== Landuse ===== */
+area[landuse=meadow],
+area|z8-[landuse=farmland],
+area[landuse=scrub],
+area|z8-[landuse=grass] {
+    z-index: -5;
+    fill-color: #E9EFDA;
+}
+
+area[landuse=forest],
+area|z8-[natural=wood] {
+    z-index: -4;
+    fill-color: #8CD6B5;
+}
+
+area[leisure=park] {
+    z-index: -4;
+    fill-color: #8CD6B5;
+}
+
+area[landuse=residential] {
+    z-index: -6;
+    fill-color: #F9F8F5;
+}
+
+area[natural=beach]	{
+    z-index: -4;
+    fill-color: #FFF1BA;
+}
+
+area[natural=coastline] {
+    z-index: -8;
+    fill-color: white;
+}
+/* ===== Landuse ===== */
+area[building] {
+    z-index: -5;
+    fill-color: lightgray;
+}
+
+/* ===== Water ==== */
+area[natural=water] {
+    z-index: -3;
+    fill-color: #a3c3ec;
+}
+
+way[waterway] {
+    z-index: -3;
+    color: #a3c3ec;
+    width: 1;
+}
+
+way[waterway][name] {
+    z-index: -2;
+    text-color: white;
+    text-position: line;
+    font-size: 11;
+    text: name;
+}
+
+area[waterway=riverbank],
+area[waterway=dock] {
+    z-index: -3;
+    fill-color: #a3c3ec;
+}
+
+/* ==== Railways === */
+way|z-8[railway=rail] {
+    color: darkgray;
+    z-index: 3;
+    width: 1;
+}
+
+way|z9-[railway=rail] {
+    color: darkgray;
+    z-index: 3;
+    width: 1;
+    dashes: 5,3;
+}
+
+/* ===== Roads (highway=*) ===== */
+/* default text */
+way|z9-[highway] {
+    text-color: #534d38;
+    text-position: line;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+
+/* widths per zoom-level */
+way|z-8[highway] {
+    width: 1;
+}
+
+way|z9[highway] {
+    width: 3 
+}
+
+way|z10[highway] {
+    width: 6;
+}
+
+way|z11-[highway] {
+    width: 8;
+}
+
+/* colors and styles per highway type. */
+way[highway=motorway],
+way[highway=motorway_link],
+way[highway=trunk],
+way[highway=trunk_link],
+way[highway=primary],
+way[highway=primary_link] {
+    color: #FF4747;
+    casing-color: #cecab8;
+    casing-width: 1;
+    z-index: 6;
+    font-size: 14;
+    text: name;
+}
+
+way|z-8[highway=secondary],
+way|z-8[highway=secondary_link] {
+    color: #E7C930; z-index: 5;
+}
+
+way|z9-[highway=secondary],
+way|z9-[highway=secondary_link] {
+    color: #E7C930;
+    casing-color: #cecab8;
+    casing-width: 1;
+    z-index: 5;
+    font-size: 14;
+    text: name;
+}
+
+way|z-8[highway=tertiary],
+way|z-8[highway=tertiary_link]	{
+    color: #E7C930;
+    z-index: 5;
+}
+
+way|z9-[highway=tertiary],
+way|z9-[highway=tertiary_link]	{
+    color: #E7C930;
+    casing-color: #cecab8;
+    casing-width: 1;
+    z-index: 5;
+    font-size: 14;
+    text: name;
+}
+
+way[highway=residential],
+way[highway=service],
+way[highway=road],
+way[highway=living_street],
+way[highway=unclassified] {
+    color: #EDEEE7;
+    z-index: 4;
+}
+
+way|z10-[highway=residential],
+way|z10-[highway=service],
+way|z10-[highway=road],
+way|z10-[highway=living_street],
+way|z10-[highway=unclassified] {
+    color: #EDEEE7;
+    casing-color: gray;
+    casing-width: 1;
+    z-index: 4;
+    font-size: 14;
+    text: name;
+}
+
+way|z10-[highway=track] {
+    color: gray;
+    width: 1;
+    dashes: 6,2;
+    z-index: 5;
+}
+
+/* pedestrian/cycleway styling */
+way|z10-[highway=foot],
+way|z10-[highway=path], 
+way|z10-[highway=footway] {
+    color: gray;
+    width: 1;
+    dashes: 6,2;
+    z-index: 3;
+}
+
+way|z10-[highway=cycleway] {
+    color: blue;
+    width: 1;
+    dashes: 2,2;
+    z-index: 3;
+}
