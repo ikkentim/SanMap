@@ -32,49 +32,49 @@ namespace TileCutter
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.mapSizeNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.resizeFactorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.processorComboBox = new System.Windows.Forms.ComboBox();
+            this.minZoomNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.skipExistingcheckBox = new System.Windows.Forms.CheckBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.outputTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.startButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.maxZoomNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.targetSizeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.startButton = new System.Windows.Forms.Button();
-            this.maxZoomNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.minZoomNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
-            this.outputPathBrowseButton = new System.Windows.Forms.Button();
-            this.outputPathTextBox = new System.Windows.Forms.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.inputPathBrowseButton = new System.Windows.Forms.Button();
             this.inputPathTextBox = new System.Windows.Forms.TextBox();
+            this.inputPathBrowseButton = new System.Windows.Forms.Button();
+            this.outputPathTextBox = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.outputPathBrowseButton = new System.Windows.Forms.Button();
+            this.outputTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.resizeFactorNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.mapSizeNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
             this.optionsGroupBox.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.targetSizeNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.maxZoomNumericUpDown)).BeginInit();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mapSizeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resizeFactorNumericUpDown)).BeginInit();
+            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.minZoomNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.maxZoomNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetSizeNumericUpDown)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.resizeFactorNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mapSizeNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // optionsGroupBox
@@ -90,31 +90,110 @@ namespace TileCutter
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Options";
             // 
-            // groupBox1
+            // groupBox3
             // 
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.inputPathTextBox);
-            this.groupBox1.Controls.Add(this.inputPathBrowseButton);
-            this.groupBox1.Controls.Add(this.outputPathTextBox);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.outputPathBrowseButton);
-            this.groupBox1.Controls.Add(this.outputTypeComboBox);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 19);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(329, 130);
-            this.groupBox1.TabIndex = 14;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Input/Output";
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.mapSizeNumericUpDown);
+            this.groupBox3.Controls.Add(this.resizeFactorNumericUpDown);
+            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Location = new System.Drawing.Point(12, 155);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(329, 81);
+            this.groupBox3.TabIndex = 15;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Open Street Map processing";
             // 
-            // label7
+            // label9
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 22);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(57, 13);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "Processor:";
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 47);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(69, 13);
+            this.label9.TabIndex = 16;
+            this.label9.Text = "Lat/Lon size:";
+            // 
+            // mapSizeNumericUpDown
+            // 
+            this.mapSizeNumericUpDown.DecimalPlaces = 9;
+            this.mapSizeNumericUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            393216});
+            this.mapSizeNumericUpDown.Location = new System.Drawing.Point(221, 45);
+            this.mapSizeNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            393216});
+            this.mapSizeNumericUpDown.Name = "mapSizeNumericUpDown";
+            this.mapSizeNumericUpDown.Size = new System.Drawing.Size(102, 20);
+            this.mapSizeNumericUpDown.TabIndex = 15;
+            this.mapSizeNumericUpDown.Value = new decimal(new int[] {
+            53924,
+            0,
+            0,
+            393216});
+            // 
+            // resizeFactorNumericUpDown
+            // 
+            this.resizeFactorNumericUpDown.Location = new System.Drawing.Point(221, 19);
+            this.resizeFactorNumericUpDown.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.resizeFactorNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.resizeFactorNumericUpDown.Name = "resizeFactorNumericUpDown";
+            this.resizeFactorNumericUpDown.Size = new System.Drawing.Size(102, 20);
+            this.resizeFactorNumericUpDown.TabIndex = 14;
+            this.resizeFactorNumericUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 21);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(132, 13);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "Preprocessor resize factor:";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.processorComboBox);
+            this.groupBox2.Controls.Add(this.minZoomNumericUpDown);
+            this.groupBox2.Controls.Add(this.skipExistingcheckBox);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.startButton);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.maxZoomNumericUpDown);
+            this.groupBox2.Controls.Add(this.targetSizeNumericUpDown);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Location = new System.Drawing.Point(347, 19);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(329, 217);
+            this.groupBox2.TabIndex = 11;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Processing";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(165, 121);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(158, 13);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "(must be 128, 256, 512, 1024...)";
             // 
             // processorComboBox
             // 
@@ -128,6 +207,19 @@ namespace TileCutter
             this.processorComboBox.TabIndex = 12;
             this.processorComboBox.SelectedIndexChanged += new System.EventHandler(this.processorComboBox_SelectedIndexChanged);
             // 
+            // minZoomNumericUpDown
+            // 
+            this.minZoomNumericUpDown.Location = new System.Drawing.Point(221, 46);
+            this.minZoomNumericUpDown.Maximum = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.minZoomNumericUpDown.Name = "minZoomNumericUpDown";
+            this.minZoomNumericUpDown.Size = new System.Drawing.Size(102, 20);
+            this.minZoomNumericUpDown.TabIndex = 0;
+            this.minZoomNumericUpDown.ValueChanged += new System.EventHandler(this.minZoomNumericUpDown_ValueChanged);
+            // 
             // skipExistingcheckBox
             // 
             this.skipExistingcheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -139,30 +231,60 @@ namespace TileCutter
             this.skipExistingcheckBox.Text = "Skip existing files";
             this.skipExistingcheckBox.UseVisualStyleBackColor = true;
             // 
-            // label6
+            // label7
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 101);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(62, 13);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Ouput type:";
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 22);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(57, 13);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Processor:";
             // 
-            // outputTypeComboBox
+            // startButton
             // 
-            this.outputTypeComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.outputTypeComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.outputTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.outputTypeComboBox.FormattingEnabled = true;
-            this.outputTypeComboBox.Items.AddRange(new object[] {
-            ".PNG",
-            ".BMP",
-            ".JPEG",
-            ".GIF"});
-            this.outputTypeComboBox.Location = new System.Drawing.Point(127, 98);
-            this.outputTypeComboBox.Name = "outputTypeComboBox";
-            this.outputTypeComboBox.Size = new System.Drawing.Size(196, 21);
-            this.outputTypeComboBox.TabIndex = 0;
+            this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.startButton.Location = new System.Drawing.Point(248, 188);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(75, 23);
+            this.startButton.TabIndex = 0;
+            this.startButton.Text = "Start";
+            this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 48);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(80, 13);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Min zoom level:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 74);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Max zoom level:";
+            // 
+            // maxZoomNumericUpDown
+            // 
+            this.maxZoomNumericUpDown.Location = new System.Drawing.Point(221, 72);
+            this.maxZoomNumericUpDown.Maximum = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.maxZoomNumericUpDown.Name = "maxZoomNumericUpDown";
+            this.maxZoomNumericUpDown.Size = new System.Drawing.Size(102, 20);
+            this.maxZoomNumericUpDown.TabIndex = 7;
+            this.maxZoomNumericUpDown.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
             // 
             // targetSizeNumericUpDown
             // 
@@ -196,92 +318,22 @@ namespace TileCutter
             this.label5.TabIndex = 8;
             this.label5.Text = "Target size:";
             // 
-            // startButton
+            // groupBox1
             // 
-            this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.startButton.Location = new System.Drawing.Point(248, 188);
-            this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(75, 23);
-            this.startButton.TabIndex = 0;
-            this.startButton.Text = "Start";
-            this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
-            // 
-            // maxZoomNumericUpDown
-            // 
-            this.maxZoomNumericUpDown.Location = new System.Drawing.Point(221, 72);
-            this.maxZoomNumericUpDown.Maximum = new decimal(new int[] {
-            32,
-            0,
-            0,
-            0});
-            this.maxZoomNumericUpDown.Name = "maxZoomNumericUpDown";
-            this.maxZoomNumericUpDown.Size = new System.Drawing.Size(102, 20);
-            this.maxZoomNumericUpDown.TabIndex = 7;
-            this.maxZoomNumericUpDown.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 74);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(83, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Max zoom level:";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 48);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Min zoom level:";
-            // 
-            // minZoomNumericUpDown
-            // 
-            this.minZoomNumericUpDown.Location = new System.Drawing.Point(221, 46);
-            this.minZoomNumericUpDown.Maximum = new decimal(new int[] {
-            32,
-            0,
-            0,
-            0});
-            this.minZoomNumericUpDown.Name = "minZoomNumericUpDown";
-            this.minZoomNumericUpDown.Size = new System.Drawing.Size(102, 20);
-            this.minZoomNumericUpDown.TabIndex = 0;
-            this.minZoomNumericUpDown.ValueChanged += new System.EventHandler(this.minZoomNumericUpDown_ValueChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 55);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Output folder:";
-            // 
-            // outputPathBrowseButton
-            // 
-            this.outputPathBrowseButton.Location = new System.Drawing.Point(248, 69);
-            this.outputPathBrowseButton.Name = "outputPathBrowseButton";
-            this.outputPathBrowseButton.Size = new System.Drawing.Size(75, 23);
-            this.outputPathBrowseButton.TabIndex = 4;
-            this.outputPathBrowseButton.Text = "Browse...";
-            this.outputPathBrowseButton.UseVisualStyleBackColor = true;
-            this.outputPathBrowseButton.Click += new System.EventHandler(this.outputPathBrowseButton_Click);
-            // 
-            // outputPathTextBox
-            // 
-            this.outputPathTextBox.Location = new System.Drawing.Point(6, 71);
-            this.outputPathTextBox.Name = "outputPathTextBox";
-            this.outputPathTextBox.ReadOnly = true;
-            this.outputPathTextBox.Size = new System.Drawing.Size(236, 20);
-            this.outputPathTextBox.TabIndex = 5;
-            this.outputPathTextBox.Text = " ";
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.inputPathTextBox);
+            this.groupBox1.Controls.Add(this.inputPathBrowseButton);
+            this.groupBox1.Controls.Add(this.outputPathTextBox);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.outputPathBrowseButton);
+            this.groupBox1.Controls.Add(this.outputTypeComboBox);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Location = new System.Drawing.Point(12, 19);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(329, 130);
+            this.groupBox1.TabIndex = 14;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Input/Output";
             // 
             // label1
             // 
@@ -291,6 +343,15 @@ namespace TileCutter
             this.label1.Size = new System.Drawing.Size(65, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Input image:";
+            // 
+            // inputPathTextBox
+            // 
+            this.inputPathTextBox.Location = new System.Drawing.Point(6, 32);
+            this.inputPathTextBox.Name = "inputPathTextBox";
+            this.inputPathTextBox.ReadOnly = true;
+            this.inputPathTextBox.Size = new System.Drawing.Size(236, 20);
+            this.inputPathTextBox.TabIndex = 2;
+            this.inputPathTextBox.Text = " ";
             // 
             // inputPathBrowseButton
             // 
@@ -302,18 +363,61 @@ namespace TileCutter
             this.inputPathBrowseButton.UseVisualStyleBackColor = true;
             this.inputPathBrowseButton.Click += new System.EventHandler(this.inputPathBrowseButton_Click);
             // 
-            // inputPathTextBox
+            // outputPathTextBox
             // 
-            this.inputPathTextBox.Location = new System.Drawing.Point(6, 32);
-            this.inputPathTextBox.Name = "inputPathTextBox";
-            this.inputPathTextBox.ReadOnly = true;
-            this.inputPathTextBox.Size = new System.Drawing.Size(236, 20);
-            this.inputPathTextBox.TabIndex = 2;
-            this.inputPathTextBox.Text = " ";
+            this.outputPathTextBox.Location = new System.Drawing.Point(6, 71);
+            this.outputPathTextBox.Name = "outputPathTextBox";
+            this.outputPathTextBox.ReadOnly = true;
+            this.outputPathTextBox.Size = new System.Drawing.Size(236, 20);
+            this.outputPathTextBox.TabIndex = 5;
+            this.outputPathTextBox.Text = " ";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 101);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(62, 13);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "Ouput type:";
+            // 
+            // outputPathBrowseButton
+            // 
+            this.outputPathBrowseButton.Location = new System.Drawing.Point(248, 69);
+            this.outputPathBrowseButton.Name = "outputPathBrowseButton";
+            this.outputPathBrowseButton.Size = new System.Drawing.Size(75, 23);
+            this.outputPathBrowseButton.TabIndex = 4;
+            this.outputPathBrowseButton.Text = "Browse...";
+            this.outputPathBrowseButton.UseVisualStyleBackColor = true;
+            this.outputPathBrowseButton.Click += new System.EventHandler(this.outputPathBrowseButton_Click);
+            // 
+            // outputTypeComboBox
+            // 
+            this.outputTypeComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.outputTypeComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.outputTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.outputTypeComboBox.FormattingEnabled = true;
+            this.outputTypeComboBox.Items.AddRange(new object[] {
+            ".PNG",
+            ".BMP",
+            ".JPEG",
+            ".GIF"});
+            this.outputTypeComboBox.Location = new System.Drawing.Point(127, 98);
+            this.outputTypeComboBox.Name = "outputTypeComboBox";
+            this.outputTypeComboBox.Size = new System.Drawing.Size(196, 21);
+            this.outputTypeComboBox.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 55);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(71, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Output folder:";
             // 
             // openFileDialog
             // 
-            this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Filter = "Images|*.bmp;*.png;*.jpg;*.gif|OpenStreetMaps|*.osm";
             // 
             // statusStrip1
@@ -349,111 +453,6 @@ namespace TileCutter
             this.panel1.Size = new System.Drawing.Size(684, 245);
             this.panel1.TabIndex = 3;
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.label10);
-            this.groupBox2.Controls.Add(this.processorComboBox);
-            this.groupBox2.Controls.Add(this.minZoomNumericUpDown);
-            this.groupBox2.Controls.Add(this.skipExistingcheckBox);
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.startButton);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.maxZoomNumericUpDown);
-            this.groupBox2.Controls.Add(this.targetSizeNumericUpDown);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Location = new System.Drawing.Point(347, 19);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(329, 217);
-            this.groupBox2.TabIndex = 11;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Processing";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label9);
-            this.groupBox3.Controls.Add(this.mapSizeNumericUpDown);
-            this.groupBox3.Controls.Add(this.resizeFactorNumericUpDown);
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Location = new System.Drawing.Point(12, 155);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(329, 81);
-            this.groupBox3.TabIndex = 15;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Open Street Map processing";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 21);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(132, 13);
-            this.label8.TabIndex = 1;
-            this.label8.Text = "Preprocessor resize factor:";
-            // 
-            // resizeFactorNumericUpDown
-            // 
-            this.resizeFactorNumericUpDown.Location = new System.Drawing.Point(221, 19);
-            this.resizeFactorNumericUpDown.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.resizeFactorNumericUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.resizeFactorNumericUpDown.Name = "resizeFactorNumericUpDown";
-            this.resizeFactorNumericUpDown.Size = new System.Drawing.Size(102, 20);
-            this.resizeFactorNumericUpDown.TabIndex = 14;
-            this.resizeFactorNumericUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // mapSizeNumericUpDown
-            // 
-            this.mapSizeNumericUpDown.DecimalPlaces = 9;
-            this.mapSizeNumericUpDown.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            393216});
-            this.mapSizeNumericUpDown.Location = new System.Drawing.Point(221, 45);
-            this.mapSizeNumericUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            393216});
-            this.mapSizeNumericUpDown.Name = "mapSizeNumericUpDown";
-            this.mapSizeNumericUpDown.Size = new System.Drawing.Size(102, 20);
-            this.mapSizeNumericUpDown.TabIndex = 15;
-            this.mapSizeNumericUpDown.Value = new decimal(new int[] {
-            53924,
-            0,
-            0,
-            393216});
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 47);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(69, 13);
-            this.label9.TabIndex = 16;
-            this.label9.Text = "Lat/Lon size:";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(165, 121);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(158, 13);
-            this.label10.TabIndex = 14;
-            this.label10.Text = "(must be 128, 256, 512, 1024...)";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -469,20 +468,20 @@ namespace TileCutter
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SanMap tile cutter";
             this.optionsGroupBox.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mapSizeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resizeFactorNumericUpDown)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.minZoomNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.maxZoomNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetSizeNumericUpDown)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.targetSizeNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.maxZoomNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.minZoomNumericUpDown)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.resizeFactorNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mapSizeNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
