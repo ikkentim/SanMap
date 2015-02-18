@@ -12,6 +12,8 @@
 // For more information, please refer to <http://unlicense.org>
 
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
@@ -42,7 +44,7 @@ namespace TileCutter.Processors
             if (!Directory.Exists(instructions.OutputDirectory))
                 return "Output directory does not exist.";
 
-        
+
             if (!ImageDefaults.IsValidSize(instructions.OutputSize))
                 return "The output size must be 128, 256, 512, 1024, ...";
 
@@ -51,41 +53,42 @@ namespace TileCutter.Processors
 
         public async Task<string> StartProcessing(InstructionSet instructions)
         {
-            var validationResult = Validate(instructions);
+            string validationResult = Validate(instructions);
             if (validationResult != null) return validationResult;
 
-            var inputPath = instructions.InputPath;
-            var tempPath = Path.Combine(Path.GetDirectoryName(inputPath), Path.GetFileNameWithoutExtension(inputPath)) + ".temp";
-            var resizeFactor = instructions.PreprocessorResizeFactor;
-            var doResize = resizeFactor > 1;
-            var origSize = instructions.MapSize;
-            var targetSize = origSize*resizeFactor;
-            var outputSize = instructions.OutputSize;
-            var cssPath = instructions.InputPath + ".mapcss";
+            string inputPath = instructions.InputPath;
+            string tempPath =
+                Path.Combine(Path.GetDirectoryName(inputPath), Path.GetFileNameWithoutExtension(inputPath)) + ".temp";
+            int resizeFactor = instructions.PreprocessorResizeFactor;
+            bool doResize = resizeFactor > 1;
+            double origSize = instructions.MapSize;
+            double targetSize = origSize*resizeFactor;
+            int outputSize = instructions.OutputSize;
+            string cssPath = instructions.InputPath + ".mapcss";
             string baseName = instructions.OutputName;
             ImageFormat outputFormat = instructions.OutputFormat;
             string outputExtension = outputFormat.GetFileExtension();
 
-            var minZoom = instructions.MinimumZoom;
-            var maxZoom = instructions.MaximumZoom;
-            var outputDir = instructions.OutputDirectory;
-            var skipExisting = instructions.SkipExisting;
+            int minZoom = instructions.MinimumZoom;
+            int maxZoom = instructions.MaximumZoom;
+            string outputDir = instructions.OutputDirectory;
+            bool skipExisting = instructions.SkipExisting;
 
             return await Task<string>.Run(() =>
             {
                 if (doResize)
                 {
-                    var doc = XDocument.Load(inputPath);
+                    XDocument doc = XDocument.Load(inputPath);
 
-                    var nodes = doc.Root.Elements("node");
+                    IEnumerable<XElement> nodes = doc.Root.Elements("node");
 
-                    foreach (var node in nodes)
+                    foreach (XElement node in nodes)
                     {
-                        var lat = node.Attribute("lat");
-                        var lon = node.Attribute("lon");
+                        XAttribute lat = node.Attribute("lat");
+                        XAttribute lon = node.Attribute("lon");
 
-                        var newLat = double.Parse(lat.Value.Replace(".", ","))*resizeFactor;
-                        var newLon = double.Parse(lon.Value.Replace(".", ","))*resizeFactor;
+                        double newLat = double.Parse(lat.Value.Replace(".", ","))*resizeFactor;
+                        double newLon = double.Parse(lon.Value.Replace(".", ","))*resizeFactor;
 
                         lat.Value = newLat.ToString("0.000000000000000000", CultureInfo.InvariantCulture);
                         lon.Value = newLon.ToString("0.000000000000000000", CultureInfo.InvariantCulture);
@@ -99,7 +102,7 @@ namespace TileCutter.Processors
                 MapCSSInterpreter mapCss;
                 RenderingInstance renderer;
 
-                var mapCssStream = new FileInfo(cssPath).OpenRead();
+                FileStream mapCssStream = new FileInfo(cssPath).OpenRead();
                 try
                 {
                     mapCss = new MapCSSInterpreter(mapCssStream, new MapCSSDictionaryImageSource());
@@ -113,7 +116,7 @@ namespace TileCutter.Processors
                     mapCssStream.Dispose();
                 }
 
-                var inputStream = new FileInfo(inputPath).OpenRead();
+                FileStream inputStream = new FileInfo(inputPath).OpenRead();
                 try
                 {
                     renderer = RenderingInstance.Build(new XmlOsmStreamSource(inputStream), mapCss);
@@ -126,7 +129,7 @@ namespace TileCutter.Processors
                 {
                     inputStream.Dispose();
                 }
-               
+
                 int processed = 0;
                 for (int zoom = minZoom; zoom <= maxZoom; zoom++)
                 {
@@ -137,12 +140,12 @@ namespace TileCutter.Processors
                     for (int x = 0; x < tiles; x++)
                         for (int y = 0; y < tiles; y++)
                         {
-
-                            var outfile = string.Format(@"{3}\{5}.{2}.{0}.{1}{4}", x, y, zoom, outputDir, outputExtension, baseName);
+                            string outfile = string.Format(@"{3}\{5}.{2}.{0}.{1}{4}", x, y, zoom, outputDir,
+                                outputExtension, baseName);
 
                             if (skipExisting && File.Exists(outfile)) continue;
 
-                            var outstr = renderer.Render(x, y, zoom, targetSize, outputSize);
+                            Bitmap outstr = renderer.Render(x, y, zoom, targetSize, outputSize);
                             outstr.Save(outfile, outputFormat);
                             outstr.Dispose();
 
@@ -153,7 +156,7 @@ namespace TileCutter.Processors
                 }
 
                 inputStream.Dispose();
-                
+
                 return null;
             });
         }
@@ -168,6 +171,5 @@ namespace TileCutter.Processors
         }
 
         #endregion
-
     }
 }

@@ -33,10 +33,10 @@ namespace TileCutter.Processors
 
         public async Task<string> StartProcessing(InstructionSet instructions)
         {
-            var validationResult = Validate(instructions);
+            string validationResult = Validate(instructions);
             if (validationResult != null) return validationResult;
 
-            var dims = ImageHelper.GetDimensions(instructions.InputPath);
+            Size? dims = ImageHelper.GetDimensions(instructions.InputPath);
             if (dims == null) return null;
 
             string inputPath = instructions.InputPath;
