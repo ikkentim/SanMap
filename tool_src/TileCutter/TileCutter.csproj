@@ -124,6 +124,7 @@
     <Compile Include="Processors\IProcessor.cs" />
     <Compile Include="Processors\OpenStreetMaps.cs" />
     <Compile Include="Processors\ProgressChangedEventArgs.cs" />
+    <Compile Include="Processors\RenderingInstance.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">

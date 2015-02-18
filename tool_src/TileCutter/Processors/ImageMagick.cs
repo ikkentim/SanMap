@@ -13,7 +13,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
@@ -54,50 +53,56 @@ namespace TileCutter.Processors
 
         public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
-        public bool Validate(InstructionSet instructions)
+        public string Validate(InstructionSet instructions)
         {
             return ImageDefaults.Validate(instructions);
         }
 
-        public async Task<bool> StartProcessing(InstructionSet instructions)
+        public async Task<string> StartProcessing(InstructionSet instructions)
         {
-            if (!Validate(instructions)) return false;
+            var validationResult = Validate(instructions);
+            if (validationResult != null) return validationResult;
 
-            Size? dims = ImageHelper.GetDimensions(instructions.InputPath);
-            if (dims == null) return false;
+            var dims = ImageHelper.GetDimensions(instructions.InputPath);
+            if (dims == null) return null;
 
             string inputPath = instructions.InputPath;
             int minZoom = instructions.MinimumZoom;
             int maxZoom = instructions.MaximumZoom;
-            var inputSize = (Size) dims;
             string outputDirectory = instructions.OutputDirectory;
-            bool skipExisting = instructions.SkipExisting;
             string baseName = instructions.OutputName;
             ImageFormat outputFormat = instructions.OutputFormat;
             string outputExtension = outputFormat.GetFileExtension();
             int outputSize = instructions.OutputSize;
 
-            return await Task<bool>.Run(() =>
+            return await Task<string>.Run(() =>
             {
-                int processed = 0;
-                for (int zoom = minZoom; zoom <= maxZoom; zoom++)
+                try
                 {
-                    if (ProgressChanged != null)
-                        ProgressChanged(this, new ProgressChangedEventArgs(processed, "Processing zoom " + zoom));
+                    int processed = 0;
+                    for (int zoom = minZoom; zoom <= maxZoom; zoom++)
+                    {
+                        if (ProgressChanged != null)
+                            ProgressChanged(this, new ProgressChangedEventArgs(processed, "Processing zoom " + zoom));
 
-                    int tiles = 1 << zoom;
+                        int tiles = 1 << zoom;
 
-                    RunMagick(string.Format(
-                        "\"{6}\" -resize {0}x{0} -crop {1}x{1} -set filename:tile \"%[fx:page.x/{1}].%[fx:page.y/{1}]\" " +
-                        "+repage +adjoin \"{2}/{3}.{4}.%[filename:tile]{5}\"", outputSize*tiles, outputSize,
-                        outputDirectory, baseName, zoom, outputExtension, inputPath));
+                        RunMagick(string.Format(
+                            "\"{6}\" -resize {0}x{0} -crop {1}x{1} -set filename:tile \"%[fx:page.x/{1}].%[fx:page.y/{1}]\" " +
+                            "+repage +adjoin \"{2}/{3}.{4}.%[filename:tile]{5}\"", outputSize*tiles, outputSize,
+                            outputDirectory, baseName, zoom, outputExtension, inputPath));
 
-                    if (ProgressChanged != null)
-                        ProgressChanged(this,
-                            new ProgressChangedEventArgs(processed += tiles, "Processing zoom " + zoom));
+                        if (ProgressChanged != null)
+                            ProgressChanged(this,
+                                new ProgressChangedEventArgs(processed += tiles, "Processing zoom " + zoom));
+                    }
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
                 }
 
-                return true;
+                return null;
             });
         }
 

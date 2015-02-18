@@ -18,14 +18,25 @@ namespace TileCutter.Processors
 {
     internal static class ImageDefaults
     {
-        public static bool Validate(InstructionSet instructions)
+        public static string Validate(InstructionSet instructions)
         {
+            if (!File.Exists(instructions.InputPath))
+                return "Input path does not exist.";
+
+            if (!Directory.Exists(instructions.OutputDirectory))
+                return "Output directory does not exist.";
+
             Size? dim = ImageHelper.GetDimensions(instructions.InputPath);
-            return File.Exists(instructions.InputPath) &&
-                   Directory.Exists(instructions.OutputDirectory) &&
-                   dim != null &&
-                   dim.Value.Width == dim.Value.Height &&
-                   IsValidSize(instructions.OutputSize);
+            if (dim == null)
+                return "Invalid image format.";
+
+            if (dim.Value.Width != dim.Value.Height)
+                return "Input image must be square.";
+
+            if (IsValidSize(instructions.OutputSize))
+                return "The output size must be 128, 256, 512, 1024, ...";
+
+            return null;
         }
 
         public static bool IsValidSize(int size)

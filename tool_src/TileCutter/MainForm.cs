@@ -47,7 +47,6 @@ namespace TileCutter
             //Set default directories
             folderBrowserDialog.SelectedPath = Directory.GetCurrentDirectory();
             openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
-            openFileDialog.RestoreDirectory = true;
         }
 
         private async void OnProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -133,9 +132,10 @@ namespace TileCutter
                 PreprocessorResizeFactor = Convert.ToInt32(resizeFactorNumericUpDown.Value)
             };
 
-            if (!GetProcessor().Validate(instr))
+            var validationResult = GetProcessor().Validate(instr);
+            if (validationResult != null)
             {
-                MessageBox.Show(this, "Invalid input.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, validationResult, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -144,17 +144,10 @@ namespace TileCutter
             toolStripStatusLabel.Text = "Starting...";
             toolStripProgressBar.Maximum = ImageDefaults.TotalTiles(instr.MinimumZoom, instr.MaximumZoom);
 
-            try
+            var result = await GetProcessor().StartProcessing(instr);
+            if (result != null)
             {
-                bool result = await GetProcessor().StartProcessing(instr);
-                if (!result)
-                {
-                    MessageBox.Show(this, "Processing failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "Processing failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, result, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             optionsGroupBox.Enabled = true;
@@ -171,7 +164,12 @@ namespace TileCutter
 
             Size? size = ImageHelper.GetDimensions(inputPathTextBox.Text);
 
-            if (size == null) return;
+            if (size == null)
+            {
+                CalculateMaxZoom();
+                return;
+            }
+
             if (size.Value.Width != size.Value.Height)
             {
                 inputPathTextBox.Text = null;
