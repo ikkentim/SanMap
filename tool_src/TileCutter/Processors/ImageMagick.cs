@@ -13,6 +13,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
@@ -60,10 +61,10 @@ namespace TileCutter.Processors
 
         public async Task<string> StartProcessing(InstructionSet instructions)
         {
-            var validationResult = Validate(instructions);
+            string validationResult = Validate(instructions);
             if (validationResult != null) return validationResult;
 
-            var dims = ImageHelper.GetDimensions(instructions.InputPath);
+            Size? dims = ImageHelper.GetDimensions(instructions.InputPath);
             if (dims == null) return null;
 
             string inputPath = instructions.InputPath;

@@ -28,7 +28,7 @@ namespace TileCutter
             new GDI(),
             new ImageMagick64(),
             new ImageMagick32(),
-            new OpenStreetMaps(), 
+            new OpenStreetMaps()
         };
 
         public MainForm()
@@ -132,7 +132,7 @@ namespace TileCutter
                 PreprocessorResizeFactor = Convert.ToInt32(resizeFactorNumericUpDown.Value)
             };
 
-            var validationResult = GetProcessor().Validate(instr);
+            string validationResult = GetProcessor().Validate(instr);
             if (validationResult != null)
             {
                 MessageBox.Show(this, validationResult, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -144,7 +144,7 @@ namespace TileCutter
             toolStripStatusLabel.Text = "Starting...";
             toolStripProgressBar.Maximum = ImageDefaults.TotalTiles(instr.MinimumZoom, instr.MaximumZoom);
 
-            var result = await GetProcessor().StartProcessing(instr);
+            string result = await GetProcessor().StartProcessing(instr);
             if (result != null)
             {
                 MessageBox.Show(this, result, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -153,7 +153,6 @@ namespace TileCutter
             optionsGroupBox.Enabled = true;
             toolStripProgressBar.Value = 0;
             toolStripStatusLabel.Text = "Done!";
-
         }
 
         private void inputPathBrowseButton_Click(object sender, EventArgs e)
@@ -201,7 +200,7 @@ namespace TileCutter
         {
             CalculateMaxZoom();
         }
-        #endregion
 
+        #endregion
     }
 }
