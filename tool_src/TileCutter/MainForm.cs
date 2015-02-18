@@ -144,9 +144,15 @@ namespace TileCutter
             toolStripStatusLabel.Text = "Starting...";
             toolStripProgressBar.Maximum = ImageDefaults.TotalTiles(instr.MinimumZoom, instr.MaximumZoom);
 
-            bool result = await GetProcessor().StartProcessing(instr);
-
-            if (!result)
+            try
+            {
+                bool result = await GetProcessor().StartProcessing(instr);
+                if (!result)
+                {
+                    MessageBox.Show(this, "Processing failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(this, "Processing failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

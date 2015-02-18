@@ -137,6 +137,11 @@ namespace TileCutter
             // 
             // resizeFactorNumericUpDown
             // 
+            this.resizeFactorNumericUpDown.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.resizeFactorNumericUpDown.Location = new System.Drawing.Point(221, 19);
             this.resizeFactorNumericUpDown.Maximum = new decimal(new int[] {
             1000000,
@@ -152,7 +157,7 @@ namespace TileCutter
             this.resizeFactorNumericUpDown.Size = new System.Drawing.Size(102, 20);
             this.resizeFactorNumericUpDown.TabIndex = 14;
             this.resizeFactorNumericUpDown.Value = new decimal(new int[] {
-            1,
+            100,
             0,
             0,
             0});
