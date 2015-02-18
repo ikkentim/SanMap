@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>SanMap</title>
+    <!-- Disallow users to scale this page -->
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <style type="text/css">
+        /* Allow the canvas to use the full height and have no margins */
+        html, body, #map-canvas {
+            height: 100%;
+            margin: 0
+        }
+    </style>
+</head>
+<body>
+<!-- The container the map is rendered in -->
+<div id="map-canvas"></div>
+
+<!-- Load all javascript -->
+<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script src="js/SanMap.min.js"></script>
+<script>
+	/*
+	 * Define the map types we will be using.
+	 *
+	 * SanMapType parameters: minZoom, maxZoom, getTileUrlFunction, [optional]tileSize.
+	 *
+	 * The default value for tileSize is 512.
+	 */
+	 
+    var mapType = new SanMapType(0, 2, function (zoom, x, y) {
+        return x == -1 && y == -1 
+		? "tiles/map.outer.png" 
+		: "tiles/map." + zoom + "." + x + "." + y + ".png";//Where the tiles are located
+    });
+	
+    var satType = new SanMapType(0, 3, function (zoom, x, y) {
+        return x == -1 && y == -1 
+		? null 
+		: "tiles/sat." + zoom + "." + x + "." + y + ".png";//Where the tiles are located
+    });
+	
+	/*
+	 * Create the map.
+	 *
+	 * createMap parameters: canvas, mapTypes, [optional]defaultZoomLevel, 
+	 *     [optional]defaultLocation, [optional]allowRepeating, [optional]defaultMapType.
+	 *
+	 * The default value for defaultZoomLevel is 2.
+	 * The default value for defaultLocation is null.
+	 * The default value for allowRepeating is false.
+	 * The default value for defaultMapType is the first key in mapTypes.
+	 */
+    var map = SanMap.createMap(document.getElementById('map-canvas'), 
+		{'Map': mapType, 'Satellite': satType}, 2, null, false, 'Satellite');
+
+	/*
+	 *
+	 * The above code contain methods SanMap provide
+	 * From here on forth we only use methods provided by the Google API
+	 *
+	 */
+	
+	/* Create a basic marker near the Pershing Square bank.
+	 * When you click on this marker, a info window is shown.
+	 */
+	var bankInfoWindow = new google.maps.InfoWindow({
+		content: '<h3>LS Bank</h3><p><b>At this bank</b>, your money is welcome.</p>'
+	});
+	var bankMarker = new google.maps.Marker({
+		position: SanMap.getLatLngFromPos(1500, -1590),
+		map: map
+	});
+	google.maps.event.addListener(bankMarker, 'click', function() {
+		map.setCenter(bankMarker.position);
+		bankInfoWindow.open(map,bankMarker);
+	});
+	
+	
+	/* Create a basic marker near Blueberry Acres.
+	 * When you click on this marker, an info window is shown.
+	 */
+	var bbInfoWindow = new google.maps.InfoWindow({
+		content: '<h3>Blueberry</h3><p><b>This place</b>, is the center of the world!</p>'
+	});
+	var bbMarker = new google.maps.Marker({
+		position: SanMap.getLatLngFromPos(0, 0),
+		map: map
+	});
+	google.maps.event.addListener(bbMarker, 'click', function() {
+		map.setCenter(bbMarker.position);
+		bbInfoWindow.open(map,bbMarker);
+	});
+	
+	/* Create a basic marker near Idlewood. The marker has a custom icon.
+	 * When you click on this marker, an info window is shown.
+	 */
+	var homeInfoWindow = new google.maps.InfoWindow({
+		content: '<h3>I live here</h3><p><b>Home</b>, sweet home!</p>'
+	});
+	var homeMarker = new google.maps.Marker({
+		position: SanMap.getLatLngFromPos(2050, -1700),
+		map: map,
+		icon: 'http://ikkentim.com/sanmap/green-house.gif'
+	});
+	google.maps.event.addListener(homeMarker, 'click', function() {
+		map.setCenter(homeMarker.position);
+		homeInfoWindow.open(map,homeMarker);
+	});
+	
+	//Uncomment to show an alert with the position when you click on the map
+	 google.maps.event.addListener(map, 'click', function(event) {
+			var pos = SanMap.getPosFromLatLng(event.latLng);
+            alert(pos.x + "," + pos.y);
+        }); 
+</script>
+</body>
