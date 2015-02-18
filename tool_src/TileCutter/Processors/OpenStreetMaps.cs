@@ -100,11 +100,15 @@ namespace TileCutter.Processors
                     }
 
                     doc.Save(tempPath);
+
                     inputPath = tempPath;
                 }
 
-                MapCSSInterpreter mapcss = new MapCSSInterpreter(new FileInfo(cssPath).OpenRead(), new MapCSSDictionaryImageSource());
-                var renderer = RenderingInstance.Build(new XmlOsmStreamSource(new FileInfo(inputPath).OpenRead()), mapcss);
+                var mapCssStream = new FileInfo(cssPath).OpenRead();
+                var inputStream = new FileInfo(inputPath).OpenRead();
+
+                MapCSSInterpreter mapcss = new MapCSSInterpreter(mapCssStream, new MapCSSDictionaryImageSource());
+                var renderer = RenderingInstance.Build(new XmlOsmStreamSource(inputStream), mapcss);
 
                 int processed = 0;
                 for (int zoom = minZoom; zoom <= maxZoom; zoom++)
@@ -132,6 +136,9 @@ namespace TileCutter.Processors
                         }
                 }
 
+                mapCssStream.Dispose();
+                inputStream.Dispose();
+                
                 return true;
             });
         }
