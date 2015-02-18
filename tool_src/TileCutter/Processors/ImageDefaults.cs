@@ -33,7 +33,7 @@ namespace TileCutter.Processors
             if (dim.Value.Width != dim.Value.Height)
                 return "Input image must be square.";
 
-            if (IsValidSize(instructions.OutputSize))
+            if (!IsValidSize(instructions.OutputSize))
                 return "The output size must be 128, 256, 512, 1024, ...";
 
             return null;
