@@ -140,15 +140,11 @@ namespace TileCutter
             }
 
             optionsGroupBox.Enabled = false;
-
             toolStripProgressBar.Value = 0;
-            toolStripProgressBar.Maximum = ImageDefaults.TotalTiles(instr.MinimumZoom, instr.MaximumZoom);
             toolStripStatusLabel.Text = "Starting...";
+            toolStripProgressBar.Maximum = ImageDefaults.TotalTiles(instr.MinimumZoom, instr.MaximumZoom);
 
             bool result = await GetProcessor().StartProcessing(instr);
-
-            toolStripProgressBar.Value = 0;
-            toolStripStatusLabel.Text = "Done!";
 
             if (!result)
             {
@@ -156,6 +152,9 @@ namespace TileCutter
             }
 
             optionsGroupBox.Enabled = true;
+            toolStripProgressBar.Value = 0;
+            toolStripStatusLabel.Text = "Done!";
+
         }
 
         private void inputPathBrowseButton_Click(object sender, EventArgs e)
