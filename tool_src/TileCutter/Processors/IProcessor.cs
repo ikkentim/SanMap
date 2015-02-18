@@ -20,7 +20,7 @@ namespace TileCutter.Processors
     {
         event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
-        bool Validate(InstructionSet instructions);
-        Task<bool> StartProcessing(InstructionSet instructions);
+        string Validate(InstructionSet instructions);
+        Task<string> StartProcessing(InstructionSet instructions);
     }
 }

@@ -26,17 +26,18 @@ namespace TileCutter.Processors
 
         public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
-        public bool Validate(InstructionSet instructions)
+        public string Validate(InstructionSet instructions)
         {
             return ImageDefaults.Validate(instructions);
         }
 
-        public async Task<bool> StartProcessing(InstructionSet instructions)
+        public async Task<string> StartProcessing(InstructionSet instructions)
         {
-            if (!Validate(instructions)) return false;
+            var validationResult = Validate(instructions);
+            if (validationResult != null) return validationResult;
 
-            Size? dims = ImageHelper.GetDimensions(instructions.InputPath);
-            if (dims == null) return false;
+            var dims = ImageHelper.GetDimensions(instructions.InputPath);
+            if (dims == null) return null;
 
             string inputPath = instructions.InputPath;
             int minZoom = instructions.MinimumZoom;
@@ -49,7 +50,7 @@ namespace TileCutter.Processors
             string outputExtension = outputFormat.GetFileExtension();
             int outputSize = instructions.OutputSize;
 
-            return await Task<bool>.Run(() =>
+            return await Task<string>.Run(() =>
             {
                 try
                 {
@@ -95,11 +96,11 @@ namespace TileCutter.Processors
                             }
                     }
 
-                    return true;
+                    return null;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    return false;
+                    return e.Message;
                 }
             });
         }
