@@ -107,7 +107,17 @@ namespace TileCutter.Processors
                 var mapCssStream = new FileInfo(cssPath).OpenRead();
                 var inputStream = new FileInfo(inputPath).OpenRead();
 
-                MapCSSInterpreter mapcss = new MapCSSInterpreter(mapCssStream, new MapCSSDictionaryImageSource());
+                MapCSSInterpreter mapcss;
+
+                try
+                {
+                    mapcss = new MapCSSInterpreter(mapCssStream, new MapCSSDictionaryImageSource());
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
                 var renderer = RenderingInstance.Build(new XmlOsmStreamSource(inputStream), mapcss);
 
                 int processed = 0;
