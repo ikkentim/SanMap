@@ -24,7 +24,7 @@
     <MapFileExtensions>false</MapFileExtensions>
     <ProductName>SanMap tile cutter</ProductName>
     <PublisherName>Tim Potze</PublisherName>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.4.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
