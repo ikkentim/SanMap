@@ -1,0 +1,283 @@
+/* z7: zoom=0
+ * z8: zoom=1
+ * z9: zoom=2
+ * ..: ...
+ */
+
+canvas {
+    background-color: #7089A9;
+    default-points: false;
+    default-lines: false;
+}
+
+/* ===== Placenames ===== */
+node[place=neighbourhood] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: black;
+    font-size: 12;
+}
+    
+node[place=suburb] {
+text: name;
+text-color: #534d38;
+text-halo-radius: 1;
+text-halo-color: black;
+font-size: 13;
+}
+
+node[place=farm] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: white;
+    font-size: 12;
+}
+
+node[place=isolated_dwelling] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: white;
+    font-size: 12;
+}
+
+node[place=hamlet] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 1;
+    text-halo-color: white;
+    font-size: 14;
+}
+
+node[place=village] {
+    text: name;
+    text-color: #534d38; 
+    text-halo-radius: 2;
+    text-halo-color: white;
+    font-size: 16;
+}
+
+node[place=town] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 2;
+    text-halo-color: white;
+    font-size: 18;
+}
+
+node[place=city] {
+    text: name;
+    text-color: #534d38;
+    text-halo-radius: 2;
+    text-halo-color: white;
+    font-size: 22;
+}
+
+/* ===== Landuse ===== */
+area[landuse=meadow],
+area|z8-[landuse=farmland] {
+    z-index: -5;
+    fill-color: #748838;
+}
+
+area|z8-[landuse=grass]
+{
+    z-index: -2;
+    fill-color: #758838;
+}
+
+area|z8-[landuse=village_green] {
+    z-index: -2;
+    fill-color: #49692A;
+}
+
+area[landuse=forest],
+area|z8-[natural=wood] {
+    z-index: -4;
+    fill-color: #758838;
+}
+
+area[leisure=park] {
+    z-index: -4;
+    fill-color: #758838;
+}
+
+area[leisure=pitch] {
+    z-index: -4;
+    fill-color: #959596;
+}
+
+area[landuse=residential] {
+    z-index: -6;
+    fill-color: #708838;
+}
+
+area[area=yes][highway=pedestrian] {
+    z-index: -4;
+    fill-color: #F7F7F7;
+}
+
+area[natural=beach]	{
+    z-index: -4;
+    fill-color: #DEBF66;
+}
+
+area[natural=coastline] {
+    z-index: -15;
+    fill-color: #38682C;
+}
+
+area[harbour] {
+    fill-color: #9B9897;
+}
+
+area[aeroway] {
+    z-index: -8;
+    fill-color: #989898;
+}
+
+area[building] {
+    z-index: -1;
+    fill-color: #F8FCF8;
+}
+
+area[amenity=parking] {
+    z-index: -4;
+    fill-color: #99989A;
+}
+
+/* ===== Water ==== */
+area[natural=water],
+area[amenity=fountain] {
+    z-index: -3;
+    fill-color: #6E87AB;
+}
+
+way[waterway] {
+    z-index: -3;
+    color: #C8CCC;
+    width: 2;
+}
+
+way[waterway][name] {
+    z-index: -2;
+    text-color: white;
+    text-position: line;
+    font-size: 11;
+    text: name;
+}
+
+area[waterway=riverbank],
+area[waterway=dock] {
+    z-index: -3;
+    fill-color: #a3c3ec;
+}
+
+/* ==== Railways === */
+way[railway=rail] {
+    color: #3F0200;
+    z-index: 3;
+}
+
+/* ===== Roads (aeroway=runway) ===== */
+way[aeroway=runway] {
+    color: #F7FBF7;
+    z-index: 6;
+    casing-color: black;
+    casing-width: 2;
+}
+
+/* ===== Roads (highway=*) ===== */
+
+way|z-8[highway],
+way|z-8[railway] {
+    width: 2;
+}
+
+way|z9[highway],
+way|z9[railway]  {
+    width: 3 
+}
+
+way|z10[highway],
+way|z10[railway]  {
+    width: 5;
+}
+
+way|z11-[highway],
+way|z11-[railway]  {
+    width: 7;
+}
+
+way[highway=motorway],
+way[highway=motorway_link],
+way[highway=trunk],
+way[highway=trunk_link],
+way[highway=primary],
+way[highway=primary_link] {
+    color: black;
+    z-index: 6;
+    font-size: 14;
+    text: name;
+}
+
+way|z-8[highway=secondary],
+way|z-8[highway=secondary_link] {
+    color: black; z-index: 5;
+}
+
+way|z9-[highway=secondary],
+way|z9-[highway=secondary_link] {
+    color: black;
+    z-index: 5;
+    font-size: 14;
+    text: name;
+}
+
+way|z-8[highway=tertiary],
+way|z-8[highway=tertiary_link]	{
+    color: black;
+    z-index: 5;
+}
+
+way|z9-[highway=tertiary],
+way|z9-[highway=tertiary_link]	{
+    color: black;
+    z-index: 5;
+    font-size: 14;
+    text: name;
+}
+
+way[highway=residential],
+way[highway=service],
+way[highway=road],
+way[highway=living_street],
+way[highway=unclassified] {
+    color: black;
+    z-index: 4;
+}
+
+way|z10-[highway=residential],
+way|z10-[highway=service],
+way|z10-[highway=road],
+way|z10-[highway=living_street],
+way|z10-[highway=unclassified] {
+    color: black;
+    z-index: 4;
+    font-size: 14;
+    text: name;
+}
+
+way[highway=track] {
+    color: #75674F;
+    z-index: 3;
+}
+
+way|z10-[highway=foot],
+way|z10-[highway=path], 
+way|z10-[highway=footway] {
+    color: #606845;
+    z-index: 3;
+}
