@@ -84,6 +84,11 @@ area|z8-[landuse=grass] {
     fill-color: #E9EFDA;
 }
 
+area|z8-[landuse=village_green] {
+    z-index: -2;
+    fill-color: #E9EFDA;
+}
+
 area[landuse=forest],
 area|z8-[natural=wood] {
     z-index: -4;
@@ -92,7 +97,12 @@ area|z8-[natural=wood] {
 
 area[leisure=park] {
     z-index: -4;
-    fill-color: #8CD6B5;
+    fill-color: #C5EBDA;
+}
+
+area[leisure=pitch] {
+    z-index: -4;
+    fill-color: #EDE3D0;
 }
 
 area[landuse=residential] {
@@ -100,23 +110,38 @@ area[landuse=residential] {
     fill-color: #F9F8F5;
 }
 
+area[area=yes][highway=pedestrian] {
+    z-index: -4;
+    fill-color: #F7F7F7;
+}
 area[natural=beach]	{
     z-index: -4;
     fill-color: #FFF1BA;
 }
 
 area[natural=coastline] {
-    z-index: -8;
+    z-index: -15;
     fill-color: white;
 }
-/* ===== Landuse ===== */
+
+area[aeroway] {
+    z-index: -8;
+    fill-color: #FBFBFB;
+}
+
 area[building] {
     z-index: -5;
     fill-color: lightgray;
 }
 
+area[amenity=parking] {
+    z-index: -4;
+    fill-color: #F7F7F7;
+}
+
 /* ===== Water ==== */
-area[natural=water] {
+area[natural=water],
+area[amenity=fountain] {
     z-index: -3;
     fill-color: #a3c3ec;
 }
@@ -124,7 +149,7 @@ area[natural=water] {
 way[waterway] {
     z-index: -3;
     color: #a3c3ec;
-    width: 1;
+    width: 2;
 }
 
 way[waterway][name] {
@@ -156,7 +181,6 @@ way|z9-[railway=rail] {
 }
 
 /* ===== Roads (highway=*) ===== */
-/* default text */
 way|z9-[highway] {
     text-color: #534d38;
     text-position: line;
@@ -164,7 +188,6 @@ way|z9-[highway] {
     text-halo-radius: 1;
 }
 
-/* widths per zoom-level */
 way|z-8[highway] {
     width: 1;
 }
@@ -174,14 +197,13 @@ way|z9[highway] {
 }
 
 way|z10[highway] {
-    width: 6;
+    width: 5;
 }
 
 way|z11-[highway] {
-    width: 8;
+    width: 7;
 }
 
-/* colors and styles per highway type. */
 way[highway=motorway],
 way[highway=motorway_link],
 way[highway=trunk],
@@ -256,7 +278,6 @@ way|z10-[highway=track] {
     z-index: 5;
 }
 
-/* pedestrian/cycleway styling */
 way|z10-[highway=foot],
 way|z10-[highway=path], 
 way|z10-[highway=footway] {
