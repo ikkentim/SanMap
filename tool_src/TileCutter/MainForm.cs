@@ -12,6 +12,7 @@
 // For more information, please refer to <http://unlicense.org>
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -37,8 +38,6 @@ namespace TileCutter
 
             // Add image processors
             processorComboBox.Items.AddRange(_processors);
-            foreach (IProcessor p in _processors)
-                p.ProgressChanged += OnProgressChanged;
 
             //Set default options
             processorComboBox.SelectedIndex = 0;
@@ -53,14 +52,18 @@ namespace TileCutter
         {
             await Task.Run(() =>
             {
+                Debug.WriteLine("{0}/{1}", e.NewProgress, toolStripProgressBar.Maximum);
                 if (statusStrip1.InvokeRequired)
                     statusStrip1.Invoke((MethodInvoker) delegate
                     {
+                        if (toolStripStatusLabel.Text == "Done!") return;
                         toolStripProgressBar.Value = Math.Min(e.NewProgress, toolStripProgressBar.Maximum);
                         toolStripStatusLabel.Text = e.ProgressStatus;
                     });
                 else
                 {
+                    if (toolStripStatusLabel.Text == "Done!") return;
+
                     toolStripProgressBar.Value = Math.Min(e.NewProgress, toolStripProgressBar.Maximum);
                     toolStripStatusLabel.Text = e.ProgressStatus;
                 }
@@ -132,7 +135,8 @@ namespace TileCutter
                 PreprocessorResizeFactor = Convert.ToInt32(resizeFactorNumericUpDown.Value)
             };
 
-            string validationResult = GetProcessor().Validate(instr);
+            var processor = GetProcessor();
+            string validationResult = processor.Validate(instr);
             if (validationResult != null)
             {
                 MessageBox.Show(this, validationResult, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -142,13 +146,17 @@ namespace TileCutter
             optionsGroupBox.Enabled = false;
             toolStripProgressBar.Value = 0;
             toolStripStatusLabel.Text = "Starting...";
+            processor.ProgressChanged += OnProgressChanged;
+
             toolStripProgressBar.Maximum = ImageDefaults.TotalTiles(instr.MinimumZoom, instr.MaximumZoom);
 
-            string result = await GetProcessor().StartProcessing(instr);
+            string result = await processor.StartProcessing(instr);
             if (result != null)
             {
                 MessageBox.Show(this, result, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            processor.ProgressChanged -= OnProgressChanged;
 
             optionsGroupBox.Enabled = true;
             toolStripProgressBar.Value = 0;

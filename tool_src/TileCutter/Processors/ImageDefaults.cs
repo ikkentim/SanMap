@@ -51,7 +51,7 @@ namespace TileCutter.Processors
             int result = 0;
 
             for (int z = minZoom; z <= maxZoom; z++)
-                result += (1 << z);
+                result += (1 << z) * (1 << z);
 
             return result;
         }

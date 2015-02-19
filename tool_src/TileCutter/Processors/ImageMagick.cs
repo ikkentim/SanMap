@@ -95,7 +95,7 @@ namespace TileCutter.Processors
 
                         if (ProgressChanged != null)
                             ProgressChanged(this,
-                                new ProgressChangedEventArgs(processed += tiles, "Processing zoom " + zoom));
+                                new ProgressChangedEventArgs(processed += tiles * tiles, "Processing zoom " + zoom));
                     }
                 }
                 catch (Exception e)

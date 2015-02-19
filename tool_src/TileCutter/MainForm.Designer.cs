@@ -442,6 +442,7 @@ namespace TileCutter
             // 
             this.toolStripProgressBar.Name = "toolStripProgressBar";
             this.toolStripProgressBar.Size = new System.Drawing.Size(130, 16);
+            this.toolStripProgressBar.Step = 25;
             // 
             // toolStripStatusLabel
             // 
