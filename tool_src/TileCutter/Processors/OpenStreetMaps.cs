@@ -17,7 +17,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using OsmSharp.Osm.Xml.Streams;
 using OsmSharp.UI.Map.Styles.MapCSS;
@@ -76,27 +78,41 @@ namespace TileCutter.Processors
 
             return await Task<string>.Run(() =>
             {
+                if (instructions.Debug)
+                    MessageBox.Show("[debug] Current culture: " + Thread.CurrentThread.CurrentCulture + ".");
                 if (doResize)
                 {
                     XDocument doc = XDocument.Load(inputPath);
 
                     IEnumerable<XElement> nodes = doc.Root.Elements("node");
 
+                    int nodeCount = 0;
                     foreach (XElement node in nodes)
                     {
                         XAttribute lat = node.Attribute("lat");
                         XAttribute lon = node.Attribute("lon");
 
-                        double newLat = double.Parse(lat.Value.Replace(".", ","))*resizeFactor;
-                        double newLon = double.Parse(lon.Value.Replace(".", ","))*resizeFactor;
+                        double newLat = double.Parse(lat.Value, CultureInfo.InvariantCulture) * resizeFactor;
+                        double newLon = double.Parse(lon.Value, CultureInfo.InvariantCulture) * resizeFactor;
 
                         lat.Value = newLat.ToString("0.000000000000000000", CultureInfo.InvariantCulture);
                         lon.Value = newLon.ToString("0.000000000000000000", CultureInfo.InvariantCulture);
+
+                        nodeCount++;
                     }
 
                     doc.Save(tempPath);
 
+                    if (instructions.Debug)
+                        MessageBox.Show("[debug] " + nodeCount + " nodes processed. Storing file to  \"" + tempPath +
+                                        "\".");
+
                     inputPath = tempPath;
+                }
+                else
+                {
+                    if (instructions.Debug)
+                        MessageBox.Show("[debug] Not resizing.");
                 }
 
                 MapCSSInterpreter mapCss;
@@ -116,6 +132,8 @@ namespace TileCutter.Processors
                     mapCssStream.Dispose();
                 }
 
+                if (instructions.Debug)
+                    MessageBox.Show("[debug] MapCSS was successfully opened.");
                 FileStream inputStream = new FileInfo(inputPath).OpenRead();
                 try
                 {
@@ -129,6 +147,9 @@ namespace TileCutter.Processors
                 {
                     inputStream.Dispose();
                 }
+
+                if (instructions.Debug)
+                    MessageBox.Show("[debug] OSM was successfully opened.");
 
                 int processed = 0;
                 for (int zoom = minZoom; zoom <= maxZoom; zoom++)

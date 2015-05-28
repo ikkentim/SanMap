@@ -64,6 +64,7 @@ namespace TileCutter
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.debugCheckBox = new System.Windows.Forms.CheckBox();
             this.optionsGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapSizeNumericUpDown)).BeginInit();
@@ -173,6 +174,7 @@ namespace TileCutter
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.debugCheckBox);
             this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.processorComboBox);
             this.groupBox2.Controls.Add(this.minZoomNumericUpDown);
@@ -459,6 +461,16 @@ namespace TileCutter
             this.panel1.Size = new System.Drawing.Size(684, 245);
             this.panel1.TabIndex = 3;
             // 
+            // debugCheckBox
+            // 
+            this.debugCheckBox.AutoSize = true;
+            this.debugCheckBox.Location = new System.Drawing.Point(9, 169);
+            this.debugCheckBox.Name = "debugCheckBox";
+            this.debugCheckBox.Size = new System.Drawing.Size(140, 17);
+            this.debugCheckBox.TabIndex = 15;
+            this.debugCheckBox.Text = "Show debug information";
+            this.debugCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -528,6 +540,7 @@ namespace TileCutter
         private System.Windows.Forms.NumericUpDown resizeFactorNumericUpDown;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.CheckBox debugCheckBox;
     }
 }
 

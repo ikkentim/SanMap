@@ -132,7 +132,8 @@ namespace TileCutter
                 OutputName = Path.GetFileNameWithoutExtension(inputPathTextBox.Text),
                 SkipExisting = skipExistingcheckBox.Checked,
                 MapSize = Convert.ToDouble(mapSizeNumericUpDown.Value),
-                PreprocessorResizeFactor = Convert.ToInt32(resizeFactorNumericUpDown.Value)
+                PreprocessorResizeFactor = Convert.ToInt32(resizeFactorNumericUpDown.Value),
+                Debug = debugCheckBox.Checked
             };
 
             var processor = GetProcessor();
