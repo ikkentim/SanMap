@@ -25,7 +25,6 @@ namespace TileCutter.Processors
         public int MinimumZoom { get; set; }
         public int MaximumZoom { get; set; }
         public bool SkipExisting { get; set; }
-        public bool Debug { get; set; }
         public int PreprocessorResizeFactor { get; set; }
         public double MapSize { get; set; }
     }
