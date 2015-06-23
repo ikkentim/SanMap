@@ -24,8 +24,8 @@
     <MapFileExtensions>false</MapFileExtensions>
     <ProductName>SanMap tile cutter</ProductName>
     <PublisherName>Tim Potze</PublisherName>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>1.4.0.%2a</ApplicationVersion>
+    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationVersion>1.5.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -74,6 +74,14 @@
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\packages\Antlr3.Runtime.PCL.3.5.0.2\lib\portable-win+net40+sl40+wp\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Magick.NET-AnyCPU, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.0.0.0015\lib\net40-client\Magick.NET-AnyCPU.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Magick.NET.Core, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.0.0.0015\lib\net40-client\Magick.NET.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OsmSharp">
       <HintPath>..\packages\OsmSharp.4.3.0.963-beta\lib\net45\OsmSharp.dll</HintPath>
     </Reference>
@@ -108,6 +116,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Processors\DLLImageMagick.cs" />
     <Compile Include="Processors\ImageHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -117,9 +126,6 @@
     </Compile>
     <Compile Include="Processors\GDI.cs" />
     <Compile Include="Processors\ImageDefaults.cs" />
-    <Compile Include="Processors\ImageMagick.cs" />
-    <Compile Include="Processors\ImageMagick32.cs" />
-    <Compile Include="Processors\ImageMagick64.cs" />
     <Compile Include="Processors\InstructionSet.cs" />
     <Compile Include="Processors\IProcessor.cs" />
     <Compile Include="Processors\OpenStreetMaps.cs" />

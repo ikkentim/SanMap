@@ -27,8 +27,7 @@ namespace TileCutter
         private readonly IProcessor[] _processors =
         {
             new GDI(),
-            new ImageMagick64(),
-            new ImageMagick32(),
+            new DLLImageMagick(), 
             new OpenStreetMaps()
         };
 
