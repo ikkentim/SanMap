@@ -1,6 +1,6 @@
 Here are a couple of mapcss examples.
 
-simple.mapcss
+basic.mapcss
 --------------
 ![](http://www.quick-screen.co.uk/g15fge)
 

@@ -222,6 +222,26 @@ SanMap.createMap = function(canvas, mapTypes, zoom, center, repeating,
 	return map;
 };
 
+/* Conversion properties. */
+SanMap.width = 6000;
+SanMap.height = 6000; 
+SanMap.ox = 0;
+SanMap.oy = 0; 
+
+/**
+ * Set the properties of the map coordinate system.
+ *
+ * @method setMapSize
+ * @param {Number} width The width of the map.
+ * @param {Number} y The GTA:SA y-coordinate.
+ */
+SanMap.setMapSize = function (width, height, offsetx, offsety) {
+    SanMap.width = width;
+    SanMap.height = height;
+    SanMap.ox = offsetx;
+    SanMap.oy = offsety;
+}
+
 /**
  * Converts a GTA:SA coordinates to an instance of google.maps.LatLng.
  *
@@ -232,8 +252,8 @@ SanMap.createMap = function(canvas, mapTypes, zoom, center, repeating,
  */
 SanMap.getLatLngFromPos = function (x, y) {
     return typeof(x) == "object" 
-		? new google.maps.LatLng(x.y / 3000 * 90, x.x / 3000 * 90) 
-		: new google.maps.LatLng(y / 3000 * 90, x / 3000 * 90);
+		? new google.maps.LatLng((x.y - SanMap.oy) / SanMap.height * 180, (x.x - SanMap.ox) / SanMap.width * 180) 
+		: new google.maps.LatLng((y - SanMap.oy) / SanMap.height * 180, (x - SanMap.ox) / SanMap.width * 180);
 }
 
 /**
@@ -244,5 +264,5 @@ SanMap.getLatLngFromPos = function (x, y) {
  * @return {Object} An Object containing the GTA:SA coordinates.
  */
 SanMap.getPosFromLatLng = function (latLng) {
-    return {x: latLng.lng() * 3000 / 90, y: latLng.lat() * 3000 / 90};
+    return {x: latLng.lng() * SanMap.width / 180 + SanMap.ox, y: latLng.lat() * SanMap.height / 180 + SanMap.oy};
 }
