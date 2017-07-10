@@ -90,7 +90,7 @@ namespace TileCutter
         private int CalculateMaxZoom(int size, int tileSize)
         {
             int zoom = 0;
-            while ((size /= 2) > tileSize) zoom++;
+            while ((size /= 2) >= tileSize) zoom++;
             return zoom;
         }
 
